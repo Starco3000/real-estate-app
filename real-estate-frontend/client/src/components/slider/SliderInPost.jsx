@@ -15,7 +15,7 @@ function SliderInPost({ images }) {
     },
     appendDots: (dots) => (
       <div style={{ marginTop: '30px' }}>
-        <ul style={{ paddingTop: '10px' }}> {dots} </ul>
+        <ul style={{ paddingTop: '5px' }}> {dots} </ul>
       </div>
     ),
     arrows: false,

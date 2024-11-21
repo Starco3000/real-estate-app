@@ -32,9 +32,8 @@ function Navbar() {
       console.log(error);
     }
   };
-
   return (
-    <header className='bg-white fixed top-0 left-0 font-lexend font-semibold text-base text-primary tracking-tighter leading-5 w-full h-[100px] shadow-xl z-[999]'>
+    <header className='bg-white fixed -top-1 left-0 font-lexend font-semibold text-base text-primary tracking-tighter leading-5 w-full h-[80px] lg:h-[100px] shadow-xl z-[999]'>
       <div className='relative w-full h-full flex px-6 lg:px-16'>
         {/* Logo KimDienHomes */}
         <Link to='/' className='m-auto'>
@@ -67,41 +66,47 @@ function Navbar() {
             </div>
             {/* Contents right */}
             {currentUser ? (
-              <div className='flex items-center relative float-right gap-x-3 group'>
-                <Avatar src={menus.img || noavatar} width={40} height={40} />
-                <span className='cursor-pointer'>{menus.name}</span>
-                <div
-                  className='absolute left-full -translate-x-full top-6
-                     w-full h-full bg-transparent'
-                />
-                {/* submenu */}
-                {menus.hasSubMenu && (
-                  <ul className='w-[300px] h-auto rounded-lg shadow-2xl p-5 bg-layout border-2 absolute left-full top-16 -translate-x-full z-50 hidden group-hover:block'>
-                    {menus.subMenu.map((subItem, index) => (
-                      <li
-                        key={index}
-                        className='border-b-[1px] border-gray-200'
-                      >
-                        <Link
-                          to={subItem.path}
-                          className='flex justify-start items-center gap-x-3 py-3'
+              <div className='flex gap-x-7'>
+                <div className='flex items-center relative float-right gap-x-3 group'>
+                  <Avatar src={menus.img || noavatar} width={40} height={40} />
+                  <span className='cursor-pointer'>{menus.name}</span>
+                  <div
+                    className='absolute left-full -translate-x-full top-7 
+                         w-full h-full bg-transparent'
+                  />
+                  {/* submenu */}
+                  {menus.hasSubMenu && (
+                    <ul className='w-[300px] h-auto rounded-lg shadow-2xl p-5 bg-layout border-2 absolute left-full top-16 -translate-x-full z-50 hidden group-hover:block'>
+                      {menus.subMenu.map((subItem, index) => (
+                        <li
+                          key={index}
+                          className='border-b-[1px] border-gray-200'
                         >
-                          {<subItem.icon />}
-                          {subItem.name}
-                        </Link>
-                      </li>
-                    ))}
-                    {currentUser && (
-                      <button
-                        className='w-full h-9 flex justify-center items-center gap-x-3 p-4 border-2 border-gray-200 rounded '
-                        onClick={handleLogout}
-                      >
-                        <FiLogOut />
-                        Logout
-                      </button>
-                    )}
-                  </ul>
-                )}
+                          <Link
+                            to={subItem.path}
+                            className='flex justify-start items-center gap-x-3 py-3'
+                          >
+                            {<subItem.icon />}
+                            {subItem.name}
+                          </Link>
+                        </li>
+                      ))}
+                      {currentUser && (
+                        <button
+                          className='w-full h-9 flex justify-center items-center gap-x-3 p-4 border-2 border-gray-200 rounded '
+                          onClick={handleLogout}
+                        >
+                          <FiLogOut />
+                          Logout
+                        </button>
+                      )}
+                    </ul>
+                  )}
+                </div>
+                {/* button new post */}
+                <div className='w-auto h-10 text-sm flex justify-center items-center p-4 border-2 border-gray-200 rounded-md hover:bg-gray-50'>
+                  <Link to='/add-post'>Đăng tin</Link>
+                </div>
               </div>
             ) : (
               MenusRightNotUser.map((item, index) => (
@@ -175,7 +180,7 @@ function Navbar() {
             {/* button new post */}
             {currentUser && (
               <div className='flex justify-center items-center p-4 mb-3 border-2 border-gray-200 rounded '>
-                <Link to='/post'>Đăng tin</Link>
+                <Link to='/add-post'>Đăng tin</Link>
               </div>
             )}
             {/* button logout */}

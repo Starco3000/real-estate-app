@@ -23,7 +23,7 @@ function RequireAuth() {
   if (!currentUser) return <Navigate to='/login' />;
   else {
     return (
-      <div className='h-[100vh] max-w-[1500px] px-20px flex flex-col'>
+      <div className='h-[100vh] max-w-[1500px] mx-auto px-20px flex flex-col'>
         <div className='navbar'>
           <Navbar />
         </div>

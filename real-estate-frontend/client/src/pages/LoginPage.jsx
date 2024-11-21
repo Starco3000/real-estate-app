@@ -74,7 +74,7 @@ function LoginPage() {
           <span className='text-red-600 font-medium'>*</span>
         </label>
         <input
-          type='text'
+          type='email'
           id='email'
           name='email'
           // value={data.email}

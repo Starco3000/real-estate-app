@@ -8,7 +8,7 @@ import noavatar from '../assets/noavatar.jpg';
 function ProfilePage() {
   const [error, setError] = useState('');
   const { updateUser, currentUser } = useContext(AuthContext);
-  const [isAvatar, setIsAvatar] = useState(currentUser?.user?.avatar);
+  const [isAvatar, setIsAvatar] = useState([]);
 
   const handleSubmit = async (element) => {
     element.preventDefault();
@@ -18,7 +18,7 @@ function ProfilePage() {
       Object.fromEntries(formData);
 
     const userId = currentUser.user._id;
-    const data = { username, name, email, phone, password, avatar: isAvatar };
+    const data = { username, name, email, phone, password, avatar: isAvatar[0] };
 
     try {
       const response = await apiRequest.put(`/users/${userId}`, data);
@@ -39,8 +39,8 @@ function ProfilePage() {
           Quản lý thông tin cá nhân
         </h1>
         {/* Avatar user */}
-        <div className='flex justify-center items-center gap-x-5 mt-5 lg:mt-7 relative'>
-          <Avatar src={isAvatar || noavatar} width={80} height={80} />
+        <div className='flex justify-center items-center gap-x-5 mt-5  relative'>
+          <Avatar src={isAvatar[0] || currentUser?.user?.avatar || noavatar} width={80} height={80} />
           <UploadWidget
             uwConfig={{
               cloudName: 'MarcusNguyen',
@@ -49,13 +49,13 @@ function ProfilePage() {
               maxImageFileSize: 3000000,
               folder: 'avatars',
             }}
-            setIsAvatar={setIsAvatar}
+            setState={setIsAvatar}
           />
         </div>
-        <form className='w-full lg:h-auto p-6 mx-3' onSubmit={handleSubmit}>
+        <form className='w-full lg:h-auto px-6  mx-3' onSubmit={handleSubmit}>
           {/* Infomation */}
           <div>
-            <div className='mt-5 lg:mt-7'>
+            <div className='mt-5 '>
               <label className='font-medium text-sm'>Username</label>
               <input
                 id='username'
@@ -65,7 +65,7 @@ function ProfilePage() {
                 className='w-full h-10 border-[1px] border-gray-300 rounded-md px-3 mt-1'
               />
             </div>
-            <div className='mt-5 lg:mt-7'>
+            <div className='mt-5 '>
               <label className='font-medium text-sm'>Họ và tên</label>
               <input
                 id='name'
@@ -75,7 +75,7 @@ function ProfilePage() {
                 className='w-full h-10 border-[1px] border-gray-300 rounded-md px-3 mt-1'
               />
             </div>
-            <div className='mt-5 lg:mt-7'>
+            <div className='mt-5 '>
               <label className='font-medium text-sm'>Email</label>
               <input
                 id='email'
@@ -85,7 +85,7 @@ function ProfilePage() {
                 className='w-full h-10 border-[1px] border-gray-300 rounded-md px-3 mt-1'
               />
             </div>
-            <div className='mt-5 lg:mt-7'>
+            <div className='mt-5 '>
               <label className='font-medium text-sm'>Số điện thoại</label>
               <input
                 id='phone'
@@ -95,7 +95,7 @@ function ProfilePage() {
                 className='w-full h-10 border-[1px] border-gray-300 rounded-md px-3 mt-1'
               />
             </div>
-            <div className='mt-5 lg:mt-7'>
+            <div className='mt-5 '>
               <label className='font-medium text-sm'>Mật khẩu</label>
               <input
                 id='password'

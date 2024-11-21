@@ -1,6 +1,129 @@
 const mongoose = require('mongoose');
 
 //Schemas
+const CoordinateSchema = new mongoose.Schema(
+  {
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true },
+  },
+  { _id: false, versionKey: false },
+);
+const PostSchema = new mongoose.Schema(
+  {
+    _id: mongoose.Schema.Types.ObjectId,
+    title: { type: String },
+    size: { type: String },
+    price: { type: String },
+    address: { type: String },
+    province: { type: String },
+    district: { type: String },
+    ward: { type: String },
+    bedroom: { type: Number },
+    bathroom: { type: Number },
+    images: { type: [String], default: [] },
+    type: { type: String },
+    status: {
+      type: String,
+    },
+    coordinate: { type: CoordinateSchema, required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    postDetailId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PostDetail',
+      require: true,
+    },
+    creataAt: { type: Date, default: Date.now },
+    updateAt: { type: Date, default: Date.now },
+  },
+  { versionKey: false },
+);
+const PostDetailSchema = new mongoose.Schema(
+  {
+    _id: mongoose.Schema.Types.ObjectId,
+    description: { type: String },
+    certificate: { type: String },
+    direction: { type: String },
+    postId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+      require: true,
+    },
+  },
+  { versionKey: false },
+);
+const FavoriteSchema = new mongoose.Schema(
+  {
+    _id: mongoose.Schema.Types.ObjectId,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    postId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+      required: true,
+    },
+  },
+  { versionKey: false },
+);
+const MessageSchema = new mongoose.Schema(
+  {
+    _id: mongoose.Schema.Types.ObjectId,
+    text: {
+      type: String,
+      default: '',
+    },
+    imageUrl: {
+      type: String,
+      default: '',
+    },
+    videoUrl: {
+      type: String,
+      default: '',
+    },
+    seen: {
+      type: Boolean,
+      default: false,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    chatId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Chat',
+    },
+  },
+  { timestamps: true },
+);
+const ChatSchema = new mongoose.Schema(
+  {
+    _id: mongoose.Schema.Types.ObjectId,
+    from_user_to: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    to_agent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Agent',
+      required: true,
+    },
+    message: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+    },
+    lastMessage: { type: String },
+    timestamp: { type: Date, default: Date.now },
+    // status: { type: String},
+  },
+  { versionKey: false },
+);
 const UserSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
@@ -22,60 +145,24 @@ const UserSchema = new mongoose.Schema(
     avatar: { type: String, default: null },
     createdAt: { type: Date, default: Date.now },
     updateAt: { type: Date, default: Date.now },
+    // posts: { type: [PostSchema], default: [] },
+    chats: { type: [ChatSchema], default: [] },
+    favorites: { type: [FavoriteSchema], default: [] },
   },
   { versionKey: false },
 );
-
-const CoordinateSchema = new mongoose.Schema(
-  {
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true },
-  },
-  { _id: false, versionKey: false },
-);
-
-const PropertySchema = new mongoose.Schema(
-  {
-    _id: mongoose.Schema.Types.ObjectId,
-    title: { type: String },
-    description: { type: String },
-    size: { type: String },
-    price: { type: String },
-    address: { type: String },
-    furniture: { type: String },
-    images: { type: [String], default: [] },
-    type: { type: String, enum: ['Cho bán', 'Cho thuê'], required: true },
-    status: {
-      type: String,
-      enum: [
-        'Chung cư mini, căn hộ',
-        'Nhà riêng',
-        'Nhà biệt thự, nhà liền kề',
-        'Nhà mặt phố',
-        'Shophouse',
-        'Đất nền dự án',
-        'Đất bán',
-        'Kho, nhà xưởng',
-      ],
-      required: true,
-    },
-    agent: { type: mongoose.Schema.Types.ObjectId, required: true },
-    coordinate: { type: CoordinateSchema, required: true },
-    creataAt: { type: Date, default: Date.now },
-    updateAt: { type: Date, default: Date.now },
-  },
-  { versionKey: false },
-);
-
 const AgentSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
-    user: { type: UserSchema, required: true },
-    properties: { type: [PropertySchema], default: [] },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    posts: { type: [PostSchema], default: [] },
   },
   { versionKey: false },
 );
-
 const NewsSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
@@ -87,71 +174,23 @@ const NewsSchema = new mongoose.Schema(
   },
   { versionKey: false },
 );
-
 const AccountSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
-    user: { type: [UserSchema], required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     deactive: { type: Boolean, default: false },
     disable: { type: Boolean, default: false },
   },
   { versionKey: false },
 );
-
 const AdminSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
     username: { type: String, required: true },
     password: { type: String, required: true },
-    properties: { type: [PropertySchema], default: [] },
+    posts: { type: [PostSchema], default: [] },
     accounts: { type: [AccountSchema], default: [] },
     news: { type: [NewsSchema], default: [] },
-  },
-  { versionKey: false },
-);
-
-const MessageSchema = new mongoose.Schema(
-  {
-    _id: mongoose.Schema.Types.ObjectId,
-    text: {
-      type: String,
-      default: '',
-    },
-    imageUrl: {
-      type: String,
-      default: '',
-    },
-    videoUrl: {
-      type: String,
-      default: '',
-    },
-    seen: {
-      type: Boolean,
-      default: false,
-    },
-    userId: {
-      type: UserSchema,
-      required: true,
-      ref: 'User',
-    },
-    chatId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'Chat',
-    },
-  },
-  { timestamps: true },
-);
-
-const ChatSchema = new mongoose.Schema(
-  {
-    _id: mongoose.Schema.Types.ObjectId,
-    from_user_to: { type: UserSchema, required: true },
-    to_agent: { type: AgentSchema, required: true },
-    message: { type: [{ type: MessageSchema, ref: 'Message' }] },
-    lastMessage: { type: String },
-    timestamp: { type: Date, default: Date.now },
-    // status: { type: String},
   },
   { versionKey: false },
 );
@@ -160,10 +199,23 @@ const ChatSchema = new mongoose.Schema(
 const Admin = mongoose.model('Admin', AdminSchema);
 const Agent = mongoose.model('Agent', AgentSchema);
 const User = mongoose.model('User', UserSchema);
-const Property = mongoose.model('Property', PropertySchema);
+const Post = mongoose.model('Post', PostSchema);
+const PostDetail = mongoose.model('PostDetail', PostDetailSchema);
+const Favorite = mongoose.model('Favorite', FavoriteSchema);
 const News = mongoose.model('News', NewsSchema);
 const Account = mongoose.model('Account', AccountSchema);
 const Chat = mongoose.model('Chat', ChatSchema);
 const Message = mongoose.model('Message', MessageSchema);
 
-module.exports = { Admin, User, Agent, Property, News, Account, Chat, Message };
+module.exports = {
+  Admin,
+  User,
+  Agent,
+  Post,
+  PostDetail,
+  Favorite,
+  News,
+  Account,
+  Chat,
+  Message,
+};

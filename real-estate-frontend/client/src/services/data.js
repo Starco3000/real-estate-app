@@ -1,5 +1,4 @@
 import { FiHome } from 'react-icons/fi';
-import noavatar from '../assets/noavatar.jpg';
 import {
   FaRegUser,
   FaListUl,
@@ -61,5 +60,99 @@ export const MenusRightIsUser = (currentUser) => {
         path: '/message',
       },
     ],
-  }
+  };
 };
+
+export const Types = [
+  {
+    id: 1,
+    name: 'Chung cư mini, căn hộ',
+    value: 'apartment',
+  },
+  {
+    id: 2,
+    name: 'Nhà riêng',
+    value: 'house',
+  },
+  {
+    id: 3,
+    name: 'Nhà biệt thự, nhà liền kề',
+    value: 'villa',
+  },
+  {
+    id: 4,
+    name: 'Nhà mặt phố',
+    value: 'street-house',
+  },
+  {
+    id: 5,
+    name: 'Shophouse',
+    value: 'shophouse',
+  },
+  {
+    id: 6,
+    name: 'Đất nền dự án',
+    value: 'land-project',
+  },
+  {
+    id: 7,
+    name: 'Đất bán',
+    value: 'land',
+  },
+  {
+    id: 8,
+    name: 'Kho, nhà xưởng',
+    value: 'warehouse',
+  },
+];
+
+export const Directions = [
+  {
+    id: 1,
+    name: 'Hướng Bắc',
+    value: 'north',
+  },
+  {
+    id: 2,
+    name: 'Hướng Đông Bắc',
+    value: 'north-east',
+  },
+  {
+    id: 3,
+    name: 'Hướng Đông',
+    value: 'east',
+  },
+  {
+    id: 4,
+    name: 'Hướng Đông Nam',
+    value: 'south-east',
+  },
+  {
+    id: 5,
+    name: 'Hướng Nam',
+    value: 'south',
+  },
+  {
+    id: 6,
+    name: 'Hướng Tây Nam',
+    value: 'south-west',
+  },
+  {
+    id: 7,
+    name: 'Hướng Tây',
+    value: 'west',
+  },
+  {
+    id: 8,
+    name: 'Hướng Tây Bắc',
+    value: 'north-west',
+  },
+];
+
+export const Certificates = [
+  {
+    id: 1,
+    name: 'Sổ hồng/Sổ đỏ',
+    value: true,
+  },
+];

@@ -1,24 +1,23 @@
 import React, { useContext } from 'react';
-import banner from '../assets/background.jpg';
-import SearchBar from '../components/SearchBar';
+import banner from '../assets/banner-HCM-city.jpg';
 import EstateCard from '../components/EstateCard';
 import ProjectCard from '../components/ProjectCard';
 import SliderComponent from '../components/slider/SliderComponent';
-import Footer from '../components/Footer';
 import { AuthContext } from '../contexts/AuthContext';
+import HomePageSearch from '../components/search/HomePageSearch';
 
 function HomePage() {
   const { currentUser } = useContext(AuthContext);
   return (
     <div>
       <div className='flex flex-col h-full'>
-        <div className=''>
+        <div className='relative '>
           <img
             src={banner}
             alt='banner'
-            className='max-h-[400px] w-full mt-24 object-fill'
+            className='h-[250px] lg:h-[450px] w-full object-cover lg:object-fill mt-16'
           />
-          <SearchBar />
+          <HomePageSearch />
         </div>
 
         {/* Estate Recommend */}

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
-import noavatar from '../assets/noavatar.jpg';
 
 function Avatar({ src, width, height }) {
   const { currentUser } = useContext(AuthContext);

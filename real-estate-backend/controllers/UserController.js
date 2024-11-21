@@ -24,7 +24,6 @@ async function getUser(request, response) {
 
 async function updateUser(request, response) {
   const _id = request.params.id;
-  // console.log('id', id);
   const tokenUserId = request.userId;
   const { password, avatar, ...inputs } = request.body;
 

@@ -5,7 +5,9 @@ import HomePage from './pages/HomePage';
 import Login from './pages/LoginPage';
 import Register from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
-import PostDetailPage from './pages/PostDetail';
+import PostDetailPage from './pages/PostDetailPage';
+import ListPost from './pages/ListPost';
+import AddPostPage from './pages/AddPostPage';
 
 function App() {
   const router = createBrowserRouter([
@@ -17,13 +19,13 @@ function App() {
           path: '/',
           element: <HomePage />,
         },
-        // {
-        //   path: '/list',
-        //   element: <ListPage />,
-        //   // loader: listPageLoader,
-        // },
         {
-          path: '/post-detail',
+          path: '/list',
+          element: <ListPost />,
+          // loader: listPageLoader,
+        },
+        {
+          path: '/:id',
           element: <PostDetailPage />,
           // loader: listPageLoader,
         },
@@ -52,14 +54,10 @@ function App() {
           element: <ProfilePage />,
           // loader: profilePageLoader,
         },
-        // {
-        //   path: '/profile/update',
-        //   element: <ProfileUpdatePage />,
-        // },
-        // {
-        //   path: '/add',
-        //   element: <NewPostPage />,
-        // },
+        {
+          path: '/add-post',
+          element: <AddPostPage />,
+        },
       ],
     },
   ]);
