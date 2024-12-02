@@ -1,71 +1,71 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { SearchFilterListPage } from './SearchFilter';
 
 function ListPostSearch() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState({
+    status: searchParams.get('status') || '',
+    address: searchParams.get('address') || '',
+    province: searchParams.get('province') || '',
+    district: searchParams.get('district') || '',
+    ward: searchParams.get('ward') || '',
+    type: searchParams.get('type') || '',
+    size: searchParams.get('size') || '',
+    price: searchParams.get('price') || '',
+    bedroom: searchParams.get('bedroom') || '',
+    direction: searchParams.get('direction') || '',
+  });
+
   const handleSearch = () => {
-    navigate('/list');
+    const queryString = new URLSearchParams({
+      status: query.status,
+      address: query.address,
+      province: query.province,
+      district: query.district,
+      ward: query.ward,
+      type: query.type ? query.type.name : '',
+      minPrice:
+        query.price && query.price.minPrice !== undefined
+          ? query.price.minPrice
+          : '',
+      maxPrice:
+        query.price && query.price.maxPrice !== undefined
+          ? query.price.maxPrice
+          : '',
+      minSize: query.size ? query.size.minSize : '',
+      maxSize: query.size ? query.size.maxSize : '',
+      bedroom: query.bedroom ? query.bedroom.value : '',
+      direction: query.direction ? query.direction.value : '',
+    }).toString();
+    console.log('Search Query:', query.direction);
+    navigate(`/list?${queryString}`);
+   
   };
+
   return (
-    <div className='w-[955px] flex flex-col gap-y-2'>
-      <div className='flex justify-center items-center'>
+    <div className='w-full flex flex-col items-center gap-y-2 '>
+      <div className='w-full flex justify-center items-center'>
         <input
           type='text'
           placeholder='Tìm kiếm theo địa chỉ, quận, phường...'
           className='w-full h-12 bg-white rounded border-[1px] border-gray-300 px-4'
+          value={query.address}
+          onChange={(e) => setQuery({ ...query, address: e.target.value })}
         />
         <button
           onClick={handleSearch}
-          className='ml-2 w-28 h-12 bg-red-500 rounded text-white flex justify-center items-center'
+          className='ml-2 w-24 h-12 bg-red-500 rounded text-white flex justify-center items-center'
         >
           <FaSearch className='text-xl' />
         </button>
       </div>
 
       {/* Type of estate options */}
-      <div className='h-8 flex gap-x-4'>
-        <select className='w-[17rem] h-10 bg-white rounded border-[1px] border-gray-300 overflow-y-scroll'>
-          <option value=''>Loại nhà đất</option>
-          <option value='apartment'>Chung cư mini, căn hộ</option>
-          <option value='house'>Nhà riêng</option>
-          <option value='villa'>Nhà biệt thự, nhà liền kề</option>
-          <option value='townhouse'>Nhà mặt phố</option>
-          <option value='shophouse'>Shophouse</option>
-          <option value='rawland'>Đất nền dự án</option>
-          <option value='land'>Đất bán</option>
-          <option value='workshop'>Kho, nhà xưởng</option>
-        </select>
-
-        <select className='w-[17rem] h-10 bg-white rounded border-[1px] border-gray-300 overflow-y-scroll'>
-          <option value=''>Mức giá</option>
-          <option value='apartment'>Dưới 500 triệu</option>
-          <option value='house'>500 - 800 triệu</option>
-          <option value='villa'>800 - 1 tỷ</option>
-          <option value='townhouse'>1 - 2 tỷ</option>
-          <option value='shophouse'>2 - 3 tỷ</option>
-          <option value='rawland'>3 - 5 tỷ</option>
-          <option value='land'>5 - 10 tỷ</option>
-          <option value='land'>10 - 20 tỷ</option>
-          <option value='land'>20 - 40 tỷ</option>
-          <option value='land'>40 - 60 tỷ</option>
-          <option value='land'>Trên 60 tỷ</option>
-          <option value='workshop'>Thỏa thuận</option>
-        </select>
-
-        <select className='w-[17rem] h-10 bg-white rounded border-[1px] border-gray-300 overflow-y-scroll'>
-          <option value=''>Diện tích</option>
-          <option value='apartment'>Dưới 30m2</option>
-          <option value='house'>30 - 50m2</option>
-          <option value='villa'>50 - 80m2</option>
-          <option value='townhouse'>80 - 100m2</option>
-          <option value='shophouse'>100 - 150m2</option>
-          <option value='rawland'>150 - 200m2</option>
-          <option value='rawland'>200 - 250m2</option>
-          <option value='rawland'>250 - 300m2</option>
-          <option value='rawland'>300 - 500m2</option>
-          <option value='land'>Trên 500m2</option>
-        </select>
+      <div className='h-14 max-w-[955px]'>
+        <SearchFilterListPage query={query} setQuery={setQuery} />
       </div>
     </div>
   );

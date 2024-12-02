@@ -6,8 +6,13 @@ import Login from './pages/LoginPage';
 import Register from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import PostDetailPage from './pages/PostDetailPage';
-import ListPost from './pages/ListPost';
+import ListPostPage from './pages/ListPostPage';
 import AddPostPage from './pages/AddPostPage';
+import {
+  latestPostsLoader,
+  listPostLoader,
+  postDetailLoader,
+} from './services/dataLoaders';
 
 function App() {
   const router = createBrowserRouter([
@@ -18,23 +23,18 @@ function App() {
         {
           path: '/',
           element: <HomePage />,
+          loader: latestPostsLoader,
         },
         {
           path: '/list',
-          element: <ListPost />,
-          // loader: listPageLoader,
+          element: <ListPostPage />,
+          loader: listPostLoader,
         },
         {
           path: '/:id',
           element: <PostDetailPage />,
-          // loader: listPageLoader,
+          loader: postDetailLoader,
         },
-        // {
-        //   path: '/:id',
-        //   element: <SinglePage />,
-        //   // loader: singlePageLoader,
-        // },
-
         {
           path: '/login',
           element: <Login />,

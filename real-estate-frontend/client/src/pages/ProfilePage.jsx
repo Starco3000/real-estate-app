@@ -18,7 +18,14 @@ function ProfilePage() {
       Object.fromEntries(formData);
 
     const userId = currentUser.user._id;
-    const data = { username, name, email, phone, password, avatar: isAvatar[0] };
+    const data = {
+      username,
+      name,
+      email,
+      phone,
+      password,
+      avatar: isAvatar[0],
+    };
 
     try {
       const response = await apiRequest.put(`/users/${userId}`, data);
@@ -40,11 +47,15 @@ function ProfilePage() {
         </h1>
         {/* Avatar user */}
         <div className='flex justify-center items-center gap-x-5 mt-5  relative'>
-          <Avatar src={isAvatar[0] || currentUser?.user?.avatar || noavatar} width={80} height={80} />
+          <Avatar
+            src={isAvatar[0] || currentUser?.user?.avatar || noavatar}
+            width={80}
+            height={80}
+          />
           <UploadWidget
             uwConfig={{
-              cloudName: 'MarcusNguyen',
-              uploadPreset: 'estate-app',
+              cloudName: `${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}`,
+              uploadPreset: `${import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET}`,
               multible: false,
               maxImageFileSize: 3000000,
               folder: 'avatars',
@@ -113,7 +124,7 @@ function ProfilePage() {
           {/* Button submit form */}
           <div className='flex justify-end mt-7'>
             <button className='w-28 h-10 bg-primary text-white rounded-md'>
-              Cập nhật
+              Cập nhập
             </button>
           </div>
         </form>

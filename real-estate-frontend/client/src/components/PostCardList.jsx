@@ -1,45 +1,78 @@
 import React from 'react';
-import house1 from '../assets/house1.png';
 import { CiBitcoin, CiHeart, CiClock1 } from 'react-icons/ci';
 import { MdOutlinePhotoSizeSelectSmall } from 'react-icons/md';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
+import { TimeSince } from '../utils/TimeSinceUtill';
+import { formatPrice, formatSize } from './FormatValue';
+import DOMPurify from 'dompurify';
 
-function PostCardList() {
+function PostCardList({ data }) {
   return (
-    <Link to='/post-detail'>
-      <div className='w-full h-[200px] bg-white border-[1px] border-gray-300 rounded-md font-lexend font-normal text-sm flex gap-x-4 overflow-hidden'>
-        <div className='lg:min-w-[200px] h-full'>
-          <img src={house1} alt='' className='w-full h-full object-cover' />
-        </div>
-        <div className='mt-4 flex flex-col gap-y-2 mr-4'>
-          <span className='font-medium text-lg text-primary line-clamp-2'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum,
-            iste tempora.
-          </span>
-          <span className='line-clamp-2'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-            excepturi dolorum in eligendi suscipit quidem minima nemo blanditiis
-            obcaecati eaque?
-          </span>
-          <div className='w-full inline-flex justify-start items-center gap-x-8'>
-            <span className='font-medium flex items-center'>
-              <CiBitcoin /> 35 tỷ
-            </span>
-            <span className='font-medium flex items-center'>
-              <MdOutlinePhotoSizeSelectSmall /> 150m2
-            </span>
-            <span className='font-medium flex items-center'>
-              <HiOutlineLocationMarker /> Quận Bình Thạnh, TP.Hồ Chí Minh
-            </span>
+    <Link to={`/${data._id}`}>
+      <div className='w-full h-auto bg-white border-[1px] border-gray-300 rounded-md font-lexend font-normal text-sm flex flex-col gap-x-4 overflow-hidden'>
+        <div className='grid grid-rows-4 grid-cols-6 gap-0.5 lg:max-w-[694px] max-h-[233px]'>
+          <div className='row-span-4 col-span-4'>
+            <img
+              src={data.images[0]}
+              alt={data.title}
+              className='w-full h-full object-cover'
+            />
           </div>
-          <div className='w-full h-1/4 border-t-[0.5px] border-gray-600 flex justify-between items-center'>
-            <span className='flex justify-center items-center gap-x-2'>
-              <CiClock1 /> 2 ngày trước
+          <div className='row-span-2 col-span-2'>
+            <img
+              src={data.images[1]}
+              alt={data.title}
+              className='w-full h-full object-cover'
+            />
+          </div>
+          <div className='row-span-2 col-span-1'>
+            <img
+              src={data.images[2]}
+              alt={data.title}
+              className='w-full h-full object-cover'
+            />
+          </div>
+          <div className='row-span-2 col-span-1'>
+            <img
+              src={data.images[3]}
+              alt={data.title}
+              className='w-full h-full object-cover'
+            />
+          </div>
+        </div>
+        <div className='w-full flex flex-col justify-between'>
+          <div className='p-4'>
+            <span className='font-medium text-base text-primary line-clamp-2 uppercase'>
+              {data.title}
             </span>
-            <button className='h-7 w-7 p-1 border-[1px] border-gray-300 flex items-center rounded'>
-              <CiHeart className='text-xl' />
-            </button>
+            <span
+              className='text-xs line-clamp-2 mt-2'
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(data.postDetailId.description),
+              }}
+            />
+          </div>
+          <div className='h-auto flex flex-col justify-center gap-3 overflow-hidden'>
+            <div className='w-full px-4 inline-flex justify-start items-center gap-x-5'>
+              <span className='text-sm text-primary font-semibold flex items-center gap-1'>
+                <CiBitcoin /> {formatPrice(data.price)}
+              </span>
+              <span className='text-sm text-primary font-semibold flex items-center gap-1'>
+                <MdOutlinePhotoSizeSelectSmall /> {formatSize(data.size)}
+              </span>
+              <span className='text-sm text-primary font-semibold flex items-center gap-1'>
+                <HiOutlineLocationMarker /> {data.district}, {data.province}
+              </span>
+            </div>
+            <div className='w-full h-full px-4 py-2 border-t-[0.5px] border-gray-300 flex justify-between items-center'>
+              <span className='italic opacity-50 flex justify-center items-center gap-x-2'>
+                <CiClock1 /> <TimeSince date={data.createdAt} />
+              </span>
+              <button className='h-7 w-7 p-1 border-[1px] border-gray-300 flex items-center rounded'>
+                <CiHeart className='text-xl' />
+              </button>
+            </div>
           </div>
         </div>
       </div>

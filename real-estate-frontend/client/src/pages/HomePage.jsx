@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React, { Suspense } from 'react';
 import banner from '../assets/banner-HCM-city.jpg';
 import EstateCard from '../components/EstateCard';
 import ProjectCard from '../components/ProjectCard';
 import SliderComponent from '../components/slider/SliderComponent';
-import { AuthContext } from '../contexts/AuthContext';
 import HomePageSearch from '../components/search/HomePageSearch';
+import { Await, useLoaderData } from 'react-router-dom';
 
 function HomePage() {
-  const { currentUser } = useContext(AuthContext);
+  const data = useLoaderData();
   return (
     <div>
       <div className='flex flex-col h-full'>
@@ -26,15 +26,19 @@ function HomePage() {
             Bất động sản dành cho bạn
           </h1>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-4 md:gap-6 lg:gap-8 mt-4 mx-auto'>
-            {' '}
-            <EstateCard />
-            <EstateCard />
-            <EstateCard />
-            <EstateCard />
-            <EstateCard />
-            <EstateCard />
-            <EstateCard />
-            <EstateCard />
+          <Suspense fallback={<p>Loading...</p>}>
+          <Await resolve={data.latestPosts} errorElement={<p>Error loading posts!</p>}>
+            {(latestPosts) => {
+              return Array.isArray(latestPosts) && latestPosts.length > 0 ? (
+                latestPosts.map((post) => (
+                  <EstateCard key={post._id} data={post} />
+                ))
+              ) : (
+                <p>No posts available</p>
+              );
+            }}
+          </Await>
+        </Suspense>
           </div>
         </div>
 

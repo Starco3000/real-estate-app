@@ -6,9 +6,12 @@ const {
   addPost,
   updatePost,
   deletePost,
+  getLatestPost,
 } = require('../controllers/PostController.js');
 
 const router = express.Router();
+
+router.get('/latest-posts', getLatestPost);
 
 router.get('/', getPosts);
 

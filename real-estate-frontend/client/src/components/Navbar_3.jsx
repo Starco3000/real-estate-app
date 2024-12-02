@@ -59,7 +59,7 @@ function Navbar() {
             <div className='flex gap-x-7'>
               {MenusLeft.map((item, index) => (
                 <li key={index} className='relative group/link'>
-                  <Link to={item.path}>{item.name}</Link>
+                  <Link to={`/list?status=${item.path}`}>{item.name}</Link>
                   <span className='absolute left-0 -bottom-1 w-0 h-[3px] bg-primary transition-all duration-500 ease-in-out group-hover/link:w-full'></span>
                 </li>
               ))}

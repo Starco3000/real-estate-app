@@ -2,7 +2,7 @@ import React from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
-function RichText({value, setValue}) {
+function RichText({ value, setValue }) {
   //Quill Settings
   const modules = {
     toolbar: [

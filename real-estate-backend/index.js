@@ -21,10 +21,6 @@ app.use(cookiesParser());
 
 const PORT = process.env.PORT || 5000;
 
-// app.get('/', (request, response) => {
-//   response.json({ message: `Server running at ${PORT}` });
-// });
-
 //api endpoints
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);

@@ -10,7 +10,7 @@ function Avatar({ src, width, height }) {
     >
       <img
         src={src}
-        alt={currentUser?.user?.name}
+        alt={currentUser?.user?.name || src}
         className='shadow-md rounded-full w-full h-full overflow-hidden object-cover'
       />
     </div>
