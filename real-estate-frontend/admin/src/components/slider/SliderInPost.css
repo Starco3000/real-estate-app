@@ -1,0 +1,32 @@
+.slick-dots {
+    position: absolute;
+    bottom: 0px;
+    transform: translateY(100%);
+    width: 100%;
+    list-style: none;
+    z-index: 1;
+    overflow-x: scroll;
+}
+
+.slick-dots ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    width: max-content;
+}
+
+.slick-dots li {
+    width: 100px;
+    height: 60px;
+    overflow: hidden;
+    margin: 0 2px;
+    border-radius: 5px;
+}
+
+.slick-dots li a img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
