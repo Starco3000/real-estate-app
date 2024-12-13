@@ -82,7 +82,7 @@ async function login(request, response) {
     //Generate a token and send it to the user
     const tokenExpriesIn = 1000 * 60 * 60 * 24 * 7; // 1 week
     const token = jwt.sign(
-      { id: user._id, isAdmin: false },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET_KEY,
       {
         expiresIn: tokenExpriesIn,
@@ -121,31 +121,25 @@ async function adminLogin(request, response) {
     //Check if the user already exists
     const admin = await Models.Admin.findOne({ username });
     console.log('admin username check:', admin);
-    if (!admin) {
-      return response.status(401).json({
-        message: 'Invalid Credentials',
-        error: true,
-      });
-    }
-
-    //Check if the password is correct
-    const isPasswordValid = password === admin.password;
-    if (!isPasswordValid) {
-      return response.status(401).json({
-        message: 'Invalid Credentials',
-        error: true,
-      });
+    if (!admin || !(await bcryptjs.compare(password, admin.password))) {
+      return res
+        .status(401)
+        .json({ success: false, message: 'Invalid credentials' });
     }
 
     //Generate a token and send it to the user
     const tokenExpriesIn = 1000 * 60 * 60 * 24 * 7; // 1 week
     const token = jwt.sign(
-      { id: admin._id, isAdmin: true },
+      { id: admin._id, role: admin.role },
       process.env.JWT_SECRET_KEY,
       {
         expiresIn: tokenExpriesIn,
       },
     );
+
+    // Exclude password from the response
+    const { password: _, ...adminWithoutPassword } = admin.toObject();
+
     response
       .cookie('token', token, {
         httpOnly: true,
@@ -154,7 +148,12 @@ async function adminLogin(request, response) {
         maxAge: tokenExpriesIn,
       })
       .status(200)
-      .json({ message: 'Login successful', token, admin });
+      .json({
+        message: 'Login successful',
+        success: true,
+        token,
+        admin: adminWithoutPassword,
+      });
   } catch (error) {
     console.log('there are error here:', error);
     return response.status(500).json({
