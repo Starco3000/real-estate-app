@@ -27,7 +27,8 @@ const verifyToken = (req, res, next) => {
       console.log('Token verification failed:', err);
       return res.status(403).json({ message: 'Token is not Valid!' });
     }
-    req.user = payload; // Set the req.user object with the payload from the token
+    console.log('Payload:', payload);
+    req.userId = payload.id; // Set the req.user object with the payload from the token
     next();
   });
 };

@@ -22,7 +22,7 @@ router.delete('/:id', verifyToken, deletePost);
 // Admin routes
 router.get('/', verifyAdminToken, getPosts);
 router.get('/:id', verifyAdminToken, getPost);
-router.post('/', verifyAdminToken, addPost);
+// router.post('/', verifyAdminToken, addPost);
 router.put('/:id', verifyAdminToken, updatePost);
 router.delete('/:id', verifyAdminToken, deletePost);
 

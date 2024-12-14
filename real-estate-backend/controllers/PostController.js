@@ -266,8 +266,10 @@ async function updatePost(request, response) {
 
 async function deletePost(request, response) {
   const _id = request.params.id;
-  const tokenUserId = request.user.id;
-  const isAdmin = request.user.role === 'admin';
+  const tokenUserId = request.userId;
+  console.log('Token User:', tokenUserId);
+  const isAdmin = request.user?.role === 'admin';
+  console.log('Is Admin:', isAdmin);
 
   try {
     // Fetch the post from the database
@@ -278,18 +280,22 @@ async function deletePost(request, response) {
         .json({ message: 'Post not found!', error: true });
     }
 
-    // Allow admins to delete any post
-    if (isAdmin || post.userId.toString() === tokenUserId) {
-      await Models.Post.findByIdAndDelete(_id);
+    // Check if the user is the owner of the post or an admin
+    if (post.userId.toString() !== tokenUserId && !isAdmin) {
       return response
-        .status(200)
-        .json({ message: 'Post deleted', success: true });
+        .status(403)
+        .json({
+          message:
+            'Access denied. You do not have permission to delete this post.',
+          error: true,
+        });
     }
 
-    // If not admin and not owner, return not authorized
-    return response
-      .status(403)
-      .json({ message: 'Not Authorized here!', error: true });
+    // Delete the post
+    await Models.Post.findByIdAndDelete(_id);
+    response
+      .status(200)
+      .json({ message: 'Post deleted successfully!', success: true });
   } catch (error) {
     console.log(error);
     response
