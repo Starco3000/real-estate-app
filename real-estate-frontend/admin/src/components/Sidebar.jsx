@@ -21,7 +21,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
     try {
       await apiRequest.post('/auth/admin/logout');
       updateAdmin(null);
-      navigate('/');
+      navigate('/admin/login');
     } catch (error) {
       console.log(error);
     }

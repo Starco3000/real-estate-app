@@ -100,10 +100,10 @@ function ListPostPage() {
             <Reload />
             Đặt lại tìm kiếm
           </button>
-          <Link to="/admin/add-post" className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'>
+          {/* <Link to="/admin/add-post" className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'>
             <Plus />
             Thêm mới tin đăng
-          </Link>
+          </Link> */}
         </div>
       </div>
       {/* Post List*/}
@@ -153,6 +153,33 @@ function ListPostPage() {
           <ChevronRight />
         </button>
       </div>
+      {/* <div className='w-full h-screen bg-white'>
+        <table className='w-full'>
+          <thead>
+            <tr className='border-b'>
+              <th className='py-3'>STT</th>
+              <th className='py-3'>Tiêu đề</th>
+              <th className='py-3'>Danh mục</th>
+              <th className='py-3'>Ngày tạo</th>
+              <th className='py-3'>Người tạo</th>
+              <th className='py-3'>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className='border-b'>
+              <td className='py-3'>1</td>
+              <td className='py-3'>Bài viết 1</td>
+              <td className='py-3'>Danh mục 1</td>
+              <td className='py-3'>01/01/2021</td>
+              <td className='py-3'>Admin</td>
+              <td className='py-3'>
+                <button className='bg-blue-500 text-white py-1 px-2 rounded'>Sửa</button>
+                <button className='bg-red-500 text-white py-1 px-2 rounded'>Xóa</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div> */}
     </div>
   );
 }

@@ -29,7 +29,7 @@ function PostDetailPage() {
   const postDetailInfo = post.post.postDetailId;
   const agentInfo = post.post.userId;
   const navigate = useNavigate();
-  console.log(post.post);
+  console.log('agentInfo', agentInfo);
 
   const handleBack = () => {
     navigate(-1);
