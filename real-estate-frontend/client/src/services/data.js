@@ -267,8 +267,8 @@ export const Prices = [
   {
     id: 14,
     name: 'Thỏa thuận',
-    minPrice: undefined,
-    maxPrice: undefined,
+    minPrice: null,
+    maxPrice: null,
   },
 ];
 

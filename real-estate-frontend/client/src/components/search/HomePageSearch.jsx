@@ -146,7 +146,7 @@ function HomePageSearch() {
           </button>
         </div>
         {/* Filter Search */}
-        <div>
+        <div className='w-full'>
           <SearchFilterHomepage query={query} setQuery={setQuery} />
         </div>
       </div>

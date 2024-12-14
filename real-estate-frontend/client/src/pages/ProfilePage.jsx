@@ -1,14 +1,33 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import Avatar from '../components/Avatar';
 import apiRequest from '../services/apiRequest';
-import UploadWidget from '../components/uploadWidget/UploadWidget';
 import noavatar from '../assets/noavatar.jpg';
+import { uploadFile } from '../helpers/uploadFile';
+import Toast, { showToast } from '../components/Toast';
 
 function ProfilePage() {
   const [error, setError] = useState('');
   const { updateUser, currentUser } = useContext(AuthContext);
   const [isAvatar, setIsAvatar] = useState([]);
+
+  const uploadPhotoRef = useRef();
+
+  const handleOpenUploadPhoto = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadPhotoRef.current.click();
+  };
+
+  const handleUploadPhoto = async (e) => {
+    const file = e.target.files[0];
+    console.log('file', file);
+    if (!file) return;
+    const folder = 'avatars'; // LocationLocation to store images
+    const uploadPhoto = await uploadFile(file, folder); // Upload files to cloudinary
+    console.log('uploadPhoto', uploadPhoto?.url);
+    setIsAvatar((prevImages) => [...prevImages, uploadPhoto?.url]);
+  };
 
   const handleSubmit = async (element) => {
     element.preventDefault();
@@ -31,8 +50,10 @@ function ProfilePage() {
       const response = await apiRequest.put(`/users/${userId}`, data);
       if (response?.data?.success) {
         updateUser(response?.data);
+        showToast('Cập nhập thành công', 'success');
       } else {
         setError(response?.data?.message);
+        showToast('Cập nhập thất bại', 'error');
       }
     } catch (error) {
       console.log(error);
@@ -52,16 +73,22 @@ function ProfilePage() {
             width={80}
             height={80}
           />
-          <UploadWidget
-            uwConfig={{
-              cloudName: `${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}`,
-              uploadPreset: `${import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET}`,
-              multible: false,
-              maxImageFileSize: 3000000,
-              folder: 'avatars',
-            }}
-            setState={setIsAvatar}
-          />
+          <label htmlFor='images'>
+            <button
+              className='w-20 h-10 bg-primary text-white text-sm rounded-md'
+              onClick={handleOpenUploadPhoto}
+            >
+              Change Photo
+            </button>
+            <input
+              type='file'
+              id='images'
+              multiple
+              className='hidden'
+              onChange={handleUploadPhoto}
+              ref={uploadPhotoRef}
+            />
+          </label>
         </div>
         <form className='w-full lg:h-auto px-6  mx-3' onSubmit={handleSubmit}>
           {/* Infomation */}
@@ -126,6 +153,7 @@ function ProfilePage() {
             <button className='w-28 h-10 bg-primary text-white rounded-md'>
               Cập nhập
             </button>
+            <Toast />
           </div>
         </form>
       </div>

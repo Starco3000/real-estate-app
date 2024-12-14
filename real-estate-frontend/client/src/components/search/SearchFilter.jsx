@@ -19,7 +19,7 @@ export const SearchFilterHomepage = ({ query, setQuery }) => {
   } = useLocationData(query, setQuery);
 
   return (
-    <div className='px-5 flex justify-start items-center gap-x-4'>
+    <div className='max-w-[955px] px-5 flex justify-start items-center gap-x-4'>
       <Selector
         selected={query.province}
         setSelected={(value) => {
@@ -66,10 +66,24 @@ export const SearchFilterHomepage = ({ query, setQuery }) => {
 
 export const SearchFilterListPage = ({ query, setQuery }) => {
   return (
-    <div className='flex gap-x-4 w-full'>
+    <div className='w-full flex gap-x-4'>
       <Selector
         selected={query.price}
-        setSelected={(value) => setQuery((prev) => ({ ...prev, price: value }))}
+        setSelected={(value) => {
+          setQuery((prev) => {
+            const newQuery = { ...prev, price: value };
+            if (value && value.name === 'Thỏa thuận') {
+              newQuery.priceNegotiable = 'true';
+              newQuery.minPrice = null;
+              newQuery.maxPrice = null;
+            } else {
+              newQuery.priceNegotiable = '';
+              newQuery.minPrice = value ? value.minPrice : null;
+              newQuery.maxPrice = value ? value.maxPrice : null;
+            }
+            return newQuery;
+          });
+        }}
         data={Prices}
         placeholder='Khung giá'
       />

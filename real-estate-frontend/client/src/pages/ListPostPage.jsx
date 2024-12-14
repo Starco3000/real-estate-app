@@ -114,7 +114,7 @@
 
 // export default ListPostPage;
 
-import React, { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight, FaRegMap } from 'react-icons/fa';
 import PostCardList from '../components/PostCardList';
 import OtherEstate from '../components/OtherEstate';
@@ -128,86 +128,117 @@ function ListPostPage() {
   const totalPages = postResponse ? postResponse.totalPages : 1;
   const [isOpenMap, setIsOpenMap] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const status = searchParams.get('status') || '';
-  const address = searchParams.get('address') || '';
-  const province = searchParams.get('province') || '';
-  const district = searchParams.get('district') || '';
-  const ward = searchParams.get('ward') || '';
-  const type = searchParams.get('type') || '';
-  const bedroom = searchParams.get('bedroom') || '';
-  const direction = searchParams.get('direction') || '';
-  // const price = searchParams.get('price') || '';
-  const minSize = searchParams.get('minSize') || '';
-  const maxSize = searchParams.get('maxSize') || '';
-  const minPrice = searchParams.get('minPrice') || '';
-  const maxPrice = searchParams.get('maxPrice') || '';
+
+  const currentPage = useMemo(() => parseInt(searchParams.get('page') || '1', 10), [searchParams]);
+  const searchParamsObject = useMemo(() => ({
+    status: searchParams.get('status') || '',
+    address: searchParams.get('address') || '',
+    province: searchParams.get('province') || '',
+    district: searchParams.get('district') || '',
+    ward: searchParams.get('ward') || '',
+    type: searchParams.get('type') || '',
+    bedroom: searchParams.get('bedroom') || '',
+    direction: searchParams.get('direction') || '',
+    minSize: searchParams.get('minSize') || '',
+    maxSize: searchParams.get('maxSize') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    priceNegotiable: searchParams.get('priceNegotiable') || '',
+    page: currentPage,
+  }), [searchParams, currentPage]);
 
   useEffect(() => {
-    console.log('Search Params:', {
-      status,
-      address,
-      province,
-      district,
-      ward,
-      type,
-      bedroom,
-      direction,
-      minSize,
-      maxSize,
-      minPrice,
-      maxPrice,
-      page: currentPage,
-    });
-    setSearchParams({
-      status,
-      address,
-      province,
-      district,
-      ward,
-      type,
-      bedroom,
-      direction,
-      minSize,
-      maxSize,
-      minPrice,
-      maxPrice,
-      page: currentPage,
-    });
-  }, [
-    status,
-    address,
-    province,
-    district,
-    ward,
-    type,
-    bedroom,
-    direction,
-    minSize,
-    maxSize,
-    minPrice,
-    maxPrice,
-    currentPage,
-    setSearchParams,
-  ]);
+    console.log('Search Params:', searchParamsObject);
+    setSearchParams(searchParamsObject);
+  }, [searchParamsObject, setSearchParams]);
 
   const handlePageChange = (page) => {
-    setSearchParams({
-      status,
-      address,
-      province,
-      district,
-      ward,
-      type,
-      minSize,
-      maxSize,
-      minPrice,
-      maxPrice,
-      bedroom,
-      direction,
-      page,
-    });
+    setSearchParams({ ...searchParamsObject, page });
   };
+  // const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  // const status = searchParams.get('status') || '';
+  // const address = searchParams.get('address') || '';
+  // const province = searchParams.get('province') || '';
+  // const district = searchParams.get('district') || '';
+  // const ward = searchParams.get('ward') || '';
+  // const type = searchParams.get('type') || '';
+  // const bedroom = searchParams.get('bedroom') || '';
+  // const direction = searchParams.get('direction') || '';
+  // // const price = searchParams.get('price') || '';
+  // const minSize = searchParams.get('minSize') || '';
+  // const maxSize = searchParams.get('maxSize') || '';
+  // const minPrice = searchParams.get('minPrice') || '';
+  // const maxPrice = searchParams.get('maxPrice') || '';
+  // const priceNegotiable = searchParams.get('priceNegotiable') || '';
+
+  // useEffect(() => {
+  //   console.log('Search Params:', {
+  //     status,
+  //     address,
+  //     province,
+  //     district,
+  //     ward,
+  //     type,
+  //     bedroom,
+  //     direction,
+  //     minSize,
+  //     maxSize,
+  //     minPrice,
+  //     maxPrice,
+  //     page: currentPage,
+  //   });
+  //   setSearchParams({
+  //     status,
+  //     address,
+  //     province,
+  //     district,
+  //     ward,
+  //     type,
+  //     bedroom,
+  //     direction,
+  //     minSize,
+  //     maxSize,
+  //     minPrice,
+  //     maxPrice,
+  //     priceNegotiable,
+  //     page: currentPage,
+  //   });
+  // }, [
+  //   status,
+  //   address,
+  //   province,
+  //   district,
+  //   ward,
+  //   type,
+  //   bedroom,
+  //   direction,
+  //   minSize,
+  //   maxSize,
+  //   minPrice,
+  //   maxPrice,
+  //   priceNegotiable,
+  //   currentPage,
+  //   setSearchParams,
+  // ]);
+
+  // const handlePageChange = (page) => {
+  //   setSearchParams({
+  //     status,
+  //     address,
+  //     province,
+  //     district,
+  //     ward,
+  //     type,
+  //     minSize,
+  //     maxSize,
+  //     minPrice,
+  //     maxPrice,
+  //     priceNegotiable,
+  //     bedroom,
+  //     direction,
+  //     page,
+  //   });
+  // };
 
   const handleSwitchMap = () => {
     setIsOpenMap((prevState) => !prevState);

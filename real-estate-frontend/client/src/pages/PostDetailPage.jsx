@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
 import Avatar from '../components/Avatar';
 import noavatar from '../assets/noavatar.jpg';
 import SliderInPost from '../components/Slider/SliderInPost';
-import InteractiveMap from '../components/map/InteractiveMap';
+import InteractiveMap from '../components/map/GoogleMap';
 import { formatPrice, formatSize, formatDate } from '../components/FormatValue';
 
 const directionMapping = {

@@ -1,18 +1,14 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PiTag, PiTagFill } from 'react-icons/pi';
 import { FaTimes } from 'react-icons/fa';
 import { MdBedroomParent, MdOutlineBedroomParent } from 'react-icons/md';
-import {
-  Types,
-  Directions,
-  Certificates,
-} from '../services/data';
+import { Types, Directions, Certificates } from '../services/data';
 import apiRequest from './../services/apiRequest';
 import Selector from '../components/Selector';
 import InputField from '../components/inputField/InputField';
 import RichText from '../components/RichText';
-import UploadWidget from '../components/uploadWidget/UploadWidget';
+import { uploadFiles } from '../helpers/uploadFile';
 import useLocationData from '../hooks/useLocationData';
 import {
   changeIconReducer,
@@ -24,6 +20,15 @@ import PriceInput from '../components/inputField/PriceInput';
 
 function AddPostPage() {
   const { provinces, districts, wards, query, setQuery } = useLocationData();
+  const [selectedType, setSelectedType] = useState(null);
+  const [selectedDirection, setSelectedDirection] = useState(null);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [value, setValue] = useState('');
+  const [errors, setErrors] = useState({});
+  const [images, setImages] = useState([]);
+  const [state, dispatch] = useReducer(changeIconReducer, {
+    selectedIcon: null,
+  });
 
   const [formValues, setFormValues] = useState({
     title: '',
@@ -34,15 +39,7 @@ function AddPostPage() {
     size: { amount: '', unit: 'm²', convertedValue: '' },
   });
 
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedDirection, setSelectedDirection] = useState(null);
-  const [selectedCertificate, setSelectedCertificate] = useState(null);
-  const [value, setValue] = useState('');
-  const [errors, setErrors] = useState({});
-  const [images, setImages] = useState([]);
-  const [state, dispatch] = useReducer(changeIconReducer, {
-    selectedIcon: null,
-  });
+  const uploadPhotoRef = useRef();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -65,6 +62,23 @@ function AddPostPage() {
       ...prevValues,
       size: value,
     }));
+  };
+
+  const handleOpenUploadPhoto = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadPhotoRef.current.click();
+  };
+
+  const handleUploadPhotos = async (e) => {
+    const files = Array.from(e.target.files);
+    console.log('file', files);
+    if (!files) return;
+    const folder = 'posts'; // LocationLocation to store images
+    const uploadPhoto = await uploadFiles(files, folder); // Upload files to cloudinary
+    const photoUrls = uploadPhoto.map((photo) => photo.url); // Get url from response
+    console.log('uploadPhoto', photoUrls);
+    setImages((prevImages) => [...prevImages, ...photoUrls]);
   };
 
   const validate = () => {
@@ -330,17 +344,22 @@ function AddPostPage() {
               ))}
             </div>
             <div className='flex-none flex flex-col'>
-              <UploadWidget
-                uwConfig={{
-                  cloudName: `${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}`,
-                  uploadPreset: `${
-                    import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-                  }`,
-                  multible: true,
-                  folder: 'posts',
-                }}
-                setState={setImages}
-              />
+              <label htmlFor='images'>
+                <button
+                  className='w-20 h-10 bg-primary text-white text-sm rounded-md'
+                  onClick={handleOpenUploadPhoto}
+                >
+                  Upload
+                </button>
+                <input
+                  type='file'
+                  id='images'
+                  multiple
+                  className='hidden'
+                  onChange={handleUploadPhotos}
+                  ref={uploadPhotoRef}
+                />
+              </label>
               <button
                 type='button'
                 className='w-20 h-10 mt-2 bg-red-500 text-white text-sm rounded-md p-2'

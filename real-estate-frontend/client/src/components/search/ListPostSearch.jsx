@@ -17,6 +17,7 @@ function ListPostSearch() {
     price: searchParams.get('price') || '',
     bedroom: searchParams.get('bedroom') || '',
     direction: searchParams.get('direction') || '',
+    priceNegotiable: searchParams.get('priceNegotiable') || '',
   });
 
   const handleSearch = () => {
@@ -39,8 +40,10 @@ function ListPostSearch() {
       maxSize: query.size ? query.size.maxSize : '',
       bedroom: query.bedroom ? query.bedroom.value : '',
       direction: query.direction ? query.direction.value : '',
+      priceNegotiable: query.priceNegotiable,
+
     }).toString();
-    console.log('Search Query:', query.direction);
+    console.log('Search Query:', query.direction.value);
     navigate(`/list?${queryString}`);
    
   };
@@ -57,14 +60,14 @@ function ListPostSearch() {
         />
         <button
           onClick={handleSearch}
-          className='ml-2 w-24 h-12 bg-red-500 rounded text-white flex justify-center items-center'
+          className='ml-2 w-24 h-12 bg-red-500 rounded text-white flex justify-center items-center hover:opacity-80'
         >
           <FaSearch className='text-xl' />
         </button>
       </div>
 
       {/* Type of estate options */}
-      <div className='h-14 max-w-[955px]'>
+      <div className='h-14 w-full max-w-[955px]'>
         <SearchFilterListPage query={query} setQuery={setQuery} />
       </div>
     </div>
