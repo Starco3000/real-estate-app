@@ -41,6 +41,7 @@ function App() {
         {
           path: 'update-post/:id',
           element: <UpdatePostPage />,
+          
         },
         {
           path: ':id',

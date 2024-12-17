@@ -1,6 +1,6 @@
 import React from 'react';
 
-function InputField({ type, id, name, placeholder, value, onChange, error}) {
+function InputField({ type, id, name, placeholder, value, onChange, error, onInput}) {
   return (
     <input
       type={type}
@@ -11,6 +11,7 @@ function InputField({ type, id, name, placeholder, value, onChange, error}) {
       value={value}
       onChange={onChange}
       error={error}
+      onInput={onInput}
     />
   );
 }

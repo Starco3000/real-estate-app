@@ -20,7 +20,6 @@ export const fetchDistricts = async (provinceCode) => {
       throw new Error('Failed to fetch districts');
     }
     const data = await response.json();
-    console.log('Data:', data);
     return data;
   } catch (error) {
     console.error('Error fetching districts:', error);

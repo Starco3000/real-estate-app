@@ -61,17 +61,27 @@ const useLocationData = (initialQuery = {}) => {
     getWards();
   }, [query.district]);
 
+  const setSelectedProvince = (province) => {
+    setQuery((prev) => ({ ...prev, province }));
+  };
+
+  const setSelectedDistrict = (district) => {
+    setQuery((prev) => ({ ...prev, district, districtCode: district.code }));
+  };
+
+  const setSelectedWard = (ward) => {
+    setQuery((prev) => ({ ...prev, ward, wardCode: ward.code }));
+  };
+
   return {
     provinces,
     districts,
     wards,
     query,
     setQuery,
-    setSelectedProvince: (value) =>
-      setQuery((prev) => ({ ...prev, province: value })),
-    setSelectedDistrict: (value) =>
-      setQuery((prev) => ({ ...prev, district: value })),
-    setSelectedWard: (value) => setQuery((prev) => ({ ...prev, ward: value })),
+    setSelectedProvince,
+    setSelectedDistrict,
+    setSelectedWard,
   };
 };
 

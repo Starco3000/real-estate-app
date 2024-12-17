@@ -23,6 +23,8 @@ export const latestPostsLoader = async () => {
   });
 };
 
+
+
 // export const postDetailLoader = async ({ request, params }) => {
 //   try {
 //     const response = await apiRequest(`/posts/${params.id}`);

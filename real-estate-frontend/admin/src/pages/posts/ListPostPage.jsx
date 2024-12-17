@@ -2,18 +2,14 @@ import { Suspense, useMemo, useState } from 'react';
 import PostCard from '../../components/PostCard';
 import Filter from '../../components/filter/Filter';
 import {
-  Link,
   Await,
   useLoaderData,
   useNavigate,
   useSearchParams,
 } from 'react-router-dom';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Reload,
-} from '../../components/Icons';
+import apiRequest from '../../services/apiRequest';
+import { ChevronLeft, ChevronRight, Reload } from '../../components/Icons';
+import { showToast } from '../../components/Toast';
 
 function ListPostPage() {
   const data = useLoaderData();
@@ -67,6 +63,17 @@ function ListPostPage() {
     setSearchParams({});
   };
 
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      await apiRequest.delete(`/admin/posts/${data._id}`);
+      showToast('Xóa bài viết thành công', 'success');
+    } catch (error) {
+      showToast('Xóa bài viết thất bại', 'error');
+    }
+  };
+
   return (
     <div className='w-full h-auto pb-4 bg-main font-lexend font-normal text-sm relative '>
       <div className='w-full h-20 bg-white flex items-center px-10'>
@@ -95,15 +102,13 @@ function ListPostPage() {
           </div>
         </div>
         <div className='w-full h-auto flex justify-between gap-x-5'>
-          <button className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out' 
-          onClick={handleReset}>
+          <button
+            className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
+            onClick={handleReset}
+          >
             <Reload />
             Đặt lại tìm kiếm
           </button>
-          {/* <Link to="/admin/add-post" className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'>
-            <Plus />
-            Thêm mới tin đăng
-          </Link> */}
         </div>
       </div>
       {/* Post List*/}
@@ -117,7 +122,13 @@ function ListPostPage() {
               const posts = postResponse.data.posts;
               console.log('posts', posts);
               return Array.isArray(posts) && posts.length > 0 ? (
-                posts.map((post) => <PostCard key={post._id} data={post} />)
+                posts.map((post) => (
+                  <PostCard
+                    key={post._id}
+                    data={post}
+                    handleEvent={handleDelete}
+                  />
+                ))
               ) : (
                 <p>No posts available</p>
               );
@@ -153,33 +164,6 @@ function ListPostPage() {
           <ChevronRight />
         </button>
       </div>
-      {/* <div className='w-full h-screen bg-white'>
-        <table className='w-full'>
-          <thead>
-            <tr className='border-b'>
-              <th className='py-3'>STT</th>
-              <th className='py-3'>Tiêu đề</th>
-              <th className='py-3'>Danh mục</th>
-              <th className='py-3'>Ngày tạo</th>
-              <th className='py-3'>Người tạo</th>
-              <th className='py-3'>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className='border-b'>
-              <td className='py-3'>1</td>
-              <td className='py-3'>Bài viết 1</td>
-              <td className='py-3'>Danh mục 1</td>
-              <td className='py-3'>01/01/2021</td>
-              <td className='py-3'>Admin</td>
-              <td className='py-3'>
-                <button className='bg-blue-500 text-white py-1 px-2 rounded'>Sửa</button>
-                <button className='bg-red-500 text-white py-1 px-2 rounded'>Xóa</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div> */}
     </div>
   );
 }

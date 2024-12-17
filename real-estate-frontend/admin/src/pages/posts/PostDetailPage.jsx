@@ -29,7 +29,7 @@ function PostDetailPage() {
   const postDetailInfo = post.post.postDetailId;
   const agentInfo = post.post.userId;
   const navigate = useNavigate();
-  console.log('agentInfo', agentInfo);
+  console.log('postDetailInfo', postDetailInfo);
 
   const handleBack = () => {
     navigate(-1);
@@ -48,7 +48,7 @@ function PostDetailPage() {
         <div className='w-full max-w-[845px] bg-white md:mb-10'>
           {/* Image Estate */}
           <div className='w-full md:h-[580px]'>
-            <SliderInPost images={postInfo.images} />
+            <SliderInPost images={postDetailInfo.images} />
           </div>
           {/* Breadcrumb */}
           <div className='w-full h-[30px] bg-yellow-400 mt-20 md:mt-4'>
@@ -62,8 +62,8 @@ function PostDetailPage() {
 
             <div className='my-4'>
               <span>
-                {postInfo.address}, {postInfo.ward}, {postInfo.district},{' '}
-                {postInfo.province}
+                {postInfo.address}, {postInfo.ward[1]}, {postInfo.district[1]},{' '}
+                {postInfo.province[1]}
               </span>
             </div>
 
@@ -125,8 +125,8 @@ function PostDetailPage() {
               <div className='flex justify-between border-b-[1px] border-gray-200'>
                 <span>Hướng nhà</span>
                 <span className='text-primary font-bold'>
-                  {directionMapping[postDetailInfo.direction] ||
-                    postDetailInfo.direction}
+                  {directionMapping[postInfo.direction] ||
+                    postInfo.direction}
                 </span>
               </div>
               <div className='flex justify-between border-b-[1px] border-gray-200'>
