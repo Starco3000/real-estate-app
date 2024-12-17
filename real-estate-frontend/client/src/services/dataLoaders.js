@@ -23,6 +23,13 @@ export const latestPostsLoader = async () => {
   });
 };
 
+export const favoritePostLoader = async ({ request, params }) => {
+  const postPromise = await apiRequest('/favorites');
+  return defer({
+    postResponse: postPromise,
+  });
+};
+
 // export const postDetailLoader = async ({ request, params }) => {
 //   try {
 //     const response = await apiRequest(`/posts/${params.id}`);

@@ -1,5 +1,5 @@
-import React from 'react';
-import { IoMdHeartEmpty } from 'react-icons/io';
+import React, { useEffect, useState } from 'react';
+import { IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
 import { Link, useLoaderData } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import Avatar from '../components/Avatar';
@@ -7,6 +7,9 @@ import noavatar from '../assets/noavatar.jpg';
 import SliderInPost from '../components/Slider/SliderInPost';
 import InteractiveMap from '../components/map/GoogleMap';
 import { formatPrice, formatSize, formatDate } from '../components/FormatValue';
+import apiRequest from '../services/apiRequest';
+import Toast, { showToast } from '../components/Toast';
+import OtherEstate from '../components/OtherEstate';
 
 const directionMapping = {
   north: 'Hướng Bắc',
@@ -24,7 +27,46 @@ function PostDetailPage() {
   const postInfo = post.post;
   const postDetailInfo = post.post.postDetailId;
   const agentInfo = post.post.userId;
-  console.log(post.post);
+  const [isFavorite, setIsFavorite] = useState(false);
+  console.log('postInfo:', postInfo);
+
+  useEffect(() => {
+    const checkFavorite = async () => {
+      if (!postInfo || !postInfo._id) return;
+      try {
+        const response = await apiRequest.get('/favorites');
+        console.log('favorites:', response.data.favorites);
+        const favorites = response.data.favorites;
+        const isFav = favorites.some(
+          (favorite) => favorite.postId._id === postInfo._id,
+        );
+        setIsFavorite(isFav);
+      } catch (error) {
+        console.error('Failed to check favorite:', error);
+      }
+    };
+
+    checkFavorite();
+  }, [postInfo._id]);
+
+  const handleFavorite = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      if (isFavorite) {
+        await apiRequest.delete(`/favorites/${postInfo._id}`);
+        showToast('Bỏ lưu bài viết thành công', 'success');
+        setIsFavorite(false);
+      } else {
+        await apiRequest.post(`/favorites/${postInfo._id}`);
+        showToast('Lưu bài viết thành công', 'success');
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Failed to update favorite status:', error);
+      showToast('Có lỗi xảy ra', 'error');
+    }
+  };
 
   return (
     <div className='w-full h-auto flex flex-col md:flex-row justify-center items-start md:gap-x-8 font-lexend font-normal text-sm pt-10 md:pt-32'>
@@ -32,7 +74,7 @@ function PostDetailPage() {
       <div className='w-full max-w-[845px] bg-white md:mb-10'>
         {/* Image Estate */}
         <div className='w-full md:h-[580px]'>
-          <SliderInPost images={postInfo.images} />
+          <SliderInPost images={postDetailInfo.images} />
         </div>
 
         {/* Breadcrumb */}
@@ -48,8 +90,8 @@ function PostDetailPage() {
 
           <div className='my-4'>
             <span>
-              {postInfo.address}, {postInfo.ward}, {postInfo.district},{' '}
-              {postInfo.province}
+              {postInfo.address}, {postInfo.ward[1]}, {postInfo.district[1]},{' '}
+              {postInfo.province[1]}
             </span>
           </div>
 
@@ -69,12 +111,17 @@ function PostDetailPage() {
               </div>
             </div>
             <div className='flex items-center'>
-              <Link
-                to='/favorite'
+              <button
                 className='w-7 h-7 border-[1px] border-black flex justify-center items-center rounded cursor-pointer'
+                onClick={handleFavorite}
               >
-                <IoMdHeartEmpty className='text-xl text-black' />
-              </Link>
+                {!isFavorite ? (
+                  <IoMdHeartEmpty className='text-xl text-black' />
+                ) : (
+                  <IoMdHeart className='text-xl text-red-400' />
+                )}
+              </button>
+              <Toast />
             </div>
           </div>
 
@@ -111,8 +158,7 @@ function PostDetailPage() {
             <div className='flex justify-between border-b-[1px] border-gray-200'>
               <span>Hướng nhà</span>
               <span className='text-primary font-bold'>
-                {directionMapping[postDetailInfo.direction] ||
-                  postDetailInfo.direction}
+                {directionMapping[postInfo.direction] || postInfo.direction}
               </span>
             </div>
             <div className='flex justify-between border-b-[1px] border-gray-200'>
@@ -130,7 +176,7 @@ function PostDetailPage() {
           {/* Map */}
           <h2 className='font-medium text-lg mt-10'>Vị trí bất động sản</h2>
           <div className='w-full h-[300px] bg-green-300 mt-4'>
-            <InteractiveMap items={[postInfo]} />
+            {/* <InteractiveMap items={[postInfo]} /> */}
           </div>
 
           {/* Post Infomation */}
@@ -183,7 +229,7 @@ function PostDetailPage() {
         </div>
 
         {/* Related Post */}
-        <div className='mt-4 px-5 py-4 border-[1px] border-gray-300 rounded-md flex flex-col justify-center items-start shadow-sm '>
+        {/* <div className='mt-4 px-5 py-4 border-[1px] border-gray-300 rounded-md flex flex-col justify-center items-start shadow-sm '>
           <span className='font-semibold text-primary text-base'>
             Bất động sản liên quan
           </span>
@@ -210,7 +256,8 @@ function PostDetailPage() {
               <Link to='/list'>Bán nhà Phường X Quận Y</Link>
             </li>
           </ul>
-        </div>
+        </div> */}
+        <OtherEstate />
       </div>
     </div>
   );

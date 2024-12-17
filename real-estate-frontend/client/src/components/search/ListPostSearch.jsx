@@ -39,7 +39,7 @@ function ListPostSearch() {
       minSize: query.size ? query.size.minSize : '',
       maxSize: query.size ? query.size.maxSize : '',
       bedroom: query.bedroom ? query.bedroom.value : '',
-      direction: query.direction ? query.direction.value : '',
+      direction: query.direction ? query.direction.name : '',
       priceNegotiable: query.priceNegotiable,
 
     }).toString();

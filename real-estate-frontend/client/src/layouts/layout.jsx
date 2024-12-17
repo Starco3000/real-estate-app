@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar_3';
 import Footer from '../components/Footer';
+import Toast from '../components/Toast';
 
 function Layout() {
   return (
@@ -11,6 +12,7 @@ function Layout() {
         <Navbar />
       </div>
       <div className='h-[100vh-100px]'>
+        <Toast />
         <Outlet />
       </div>
       <Footer />

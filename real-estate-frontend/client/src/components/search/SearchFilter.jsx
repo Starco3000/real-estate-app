@@ -19,7 +19,7 @@ export const SearchFilterHomepage = ({ query, setQuery }) => {
   } = useLocationData(query, setQuery);
 
   return (
-    <div className='max-w-[955px] px-5 flex justify-start items-center gap-x-4'>
+    <div className='w-auto h-auto px-5 flex justify-start items-center gap-x-4'>
       <Selector
         selected={query.province}
         setSelected={(value) => {

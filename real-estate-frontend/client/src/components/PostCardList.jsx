@@ -8,34 +8,35 @@ import { formatPrice, formatSize } from './FormatValue';
 import DOMPurify from 'dompurify';
 
 function PostCardList({ data }) {
+  const postDetailId = data.postDetailId;
   return (
     <Link to={`/${data._id}`}>
       <div className='w-full h-auto bg-white border-[1px] border-gray-300 rounded-md font-lexend font-normal text-sm flex flex-col gap-x-4 overflow-hidden'>
         <div className='grid grid-rows-4 grid-cols-6 gap-0.5 lg:max-w-[694px] max-h-[233px]'>
           <div className='row-span-4 col-span-4'>
             <img
-              src={data.images[0]}
+              src={postDetailId.images[0]}
               alt={data.title}
               className='w-full h-full object-cover'
             />
           </div>
           <div className='row-span-2 col-span-2'>
             <img
-              src={data.images[1]}
+              src={postDetailId.images[1]}
               alt={data.title}
               className='w-full h-full object-cover'
             />
           </div>
           <div className='row-span-2 col-span-1'>
             <img
-              src={data.images[2]}
+              src={postDetailId.images[2]}
               alt={data.title}
               className='w-full h-full object-cover'
             />
           </div>
           <div className='row-span-2 col-span-1'>
             <img
-              src={data.images[3]}
+              src={postDetailId.images[3]}
               alt={data.title}
               className='w-full h-full object-cover'
             />
@@ -62,7 +63,7 @@ function PostCardList({ data }) {
                 <MdOutlinePhotoSizeSelectSmall /> {formatSize(data.size)}
               </span>
               <span className='text-sm text-primary font-semibold flex items-center gap-1'>
-                <HiOutlineLocationMarker /> {data.district}, {data.province}
+                <HiOutlineLocationMarker /> {data.district[1]}, {data.province[1]}
               </span>
             </div>
             <div className='w-full h-full px-4 py-2 border-t-[0.5px] border-gray-300 flex justify-between items-center'>

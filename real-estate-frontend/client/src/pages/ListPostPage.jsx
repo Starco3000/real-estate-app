@@ -115,7 +115,12 @@
 // export default ListPostPage;
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
-import { FaChevronLeft, FaChevronRight, FaRegMap } from 'react-icons/fa';
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaRegMap,
+  FaSyncAlt,
+} from 'react-icons/fa';
 import PostCardList from '../components/PostCardList';
 import OtherEstate from '../components/OtherEstate';
 import { useLoaderData, Await, useSearchParams } from 'react-router-dom';
@@ -129,23 +134,29 @@ function ListPostPage() {
   const [isOpenMap, setIsOpenMap] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const currentPage = useMemo(() => parseInt(searchParams.get('page') || '1', 10), [searchParams]);
-  const searchParamsObject = useMemo(() => ({
-    status: searchParams.get('status') || '',
-    address: searchParams.get('address') || '',
-    province: searchParams.get('province') || '',
-    district: searchParams.get('district') || '',
-    ward: searchParams.get('ward') || '',
-    type: searchParams.get('type') || '',
-    bedroom: searchParams.get('bedroom') || '',
-    direction: searchParams.get('direction') || '',
-    minSize: searchParams.get('minSize') || '',
-    maxSize: searchParams.get('maxSize') || '',
-    minPrice: searchParams.get('minPrice') || '',
-    maxPrice: searchParams.get('maxPrice') || '',
-    priceNegotiable: searchParams.get('priceNegotiable') || '',
-    page: currentPage,
-  }), [searchParams, currentPage]);
+  const currentPage = useMemo(
+    () => parseInt(searchParams.get('page') || '1', 10),
+    [searchParams],
+  );
+  const searchParamsObject = useMemo(
+    () => ({
+      status: searchParams.get('status') || '',
+      address: searchParams.get('address') || '',
+      province: searchParams.get('province') || '',
+      district: searchParams.get('district') || '',
+      ward: searchParams.get('ward') || '',
+      type: searchParams.get('type') || '',
+      bedroom: searchParams.get('bedroom') || '',
+      direction: searchParams.get('direction') || '',
+      minSize: searchParams.get('minSize') || '',
+      maxSize: searchParams.get('maxSize') || '',
+      minPrice: searchParams.get('minPrice') || '',
+      maxPrice: searchParams.get('maxPrice') || '',
+      priceNegotiable: searchParams.get('priceNegotiable') || '',
+      page: currentPage,
+    }),
+    [searchParams, currentPage],
+  );
 
   useEffect(() => {
     console.log('Search Params:', searchParamsObject);
@@ -245,6 +256,18 @@ function ListPostPage() {
     console.log('isOpenMap', isOpenMap);
   };
 
+  const handleReset = () => {
+    const resetParams = {
+      status: searchParams.get('status') || '',
+      province: searchParams.get('province') || '',
+      district: searchParams.get('district') || '',
+      ward: searchParams.get('ward') || '',
+      type: searchParams.get('type') || '',
+      page: 1, // Reset page to 1
+    };
+    setSearchParams(resetParams);
+  };
+
   return (
     <div
       className={`w-full pb-2 pt-28 px-3 flex items-center font-lexend font-normal text-sm  ${
@@ -258,12 +281,21 @@ function ListPostPage() {
         <div className='w-full mt-4 flex justify-center items-start gap-x-8'>
           {/* left content */}
           <div className='w-full max-w-[694px] bg-inherit mb-10 flex flex-col gap-y-4'>
-            <button
-              className='w-28 h-9 border border-gray-400 rounded flex justify-center items-center gap-2'
-              onClick={handleSwitchMap}
-            >
-              <FaRegMap /> Bản đồ
-            </button>
+            <div className='flex justify-between items-center'>
+              <button
+                className={`w-auto h-auto p-3 border border-black rounded-md flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out ${isOpenMap && 'bg-primary text-white'} `}
+                onClick={handleSwitchMap}
+              >
+                <FaRegMap /> Bản đồ
+              </button>
+              <button
+                className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
+                onClick={handleReset}
+              >
+                <FaSyncAlt />
+                Đặt lại tìm kiếm
+              </button>
+            </div>
             <Suspense fallback={<p>Loading...</p>}>
               <Await
                 resolve={data.postResponse}

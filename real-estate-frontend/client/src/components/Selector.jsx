@@ -10,7 +10,7 @@ function Selector({ selected, setSelected, data = [], placeholder, disabled }) {
     item.name.toLowerCase().includes(searchItem.toLowerCase()),
   );
   return (
-    <div className='w-[250px] h-10 font-lexend font-normal text-sm bg-white border-[1px] border-gray-300 rounded shadow-sm select-none relative'>
+    <div className='min-w-[170px] w-full h-10 font-lexend font-normal text-sm bg-white border-[1px] border-gray-300 rounded shadow-sm select-none relative'>
       <div
         className='w-full flex justify-between items-center p-2 text-base'
         onClick={() => !disabled && setIsActive(!isActive)}

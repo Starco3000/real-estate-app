@@ -17,6 +17,7 @@ import {
 } from '../hooks/useReducer';
 import SizeInput from '../components/inputField/SizeInput';
 import PriceInput from '../components/inputField/PriceInput';
+import { showToast } from '../components/Toast';
 
 function AddPostPage() {
   const { provinces, districts, wards, query, setQuery } = useLocationData();
@@ -33,6 +34,8 @@ function AddPostPage() {
   const [formValues, setFormValues] = useState({
     title: '',
     address: '',
+    bedroom: '',
+    bathroom: '',
     latitude: '',
     longitude: '',
     price: { amount: '', unit: 'triệu', convertedValue: '' },
@@ -48,6 +51,10 @@ function AddPostPage() {
       ...prevValues,
       [name]: value,
     }));
+  };
+  const handleNumberInput = (e) => {
+    const value = e.target.value;
+    e.target.value = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
   };
 
   const handlePriceChange = (value) => {
@@ -74,7 +81,7 @@ function AddPostPage() {
     const files = Array.from(e.target.files);
     console.log('file', files);
     if (!files) return;
-    const folder = 'posts'; // LocationLocation to store images
+    const folder = 'posts'; // Location to store images
     const uploadPhoto = await uploadFiles(files, folder); // Upload files to cloudinary
     const photoUrls = uploadPhoto.map((photo) => photo.url); // Get url from response
     console.log('uploadPhoto', photoUrls);
@@ -129,28 +136,33 @@ function AddPostPage() {
         price: convertedPrice,
         bedroom: inputs.bedroom ? parseInt(inputs.bedroom) : null,
         bathroom: inputs.bathroom ? parseInt(inputs.bathroom) : null,
+        direction: selectedDirection ? selectedDirection.name : '',
         address: inputs.address,
-        province: query.province ? query.province.name : '',
-        district: query.district ? query.district.name : '',
-        ward: query.ward ? query.ward.name : '',
+        province: query.province
+          ? [query.province.code, query.province.name]
+          : [],
+        district: query.district
+          ? [query.district.code, query.district.name]
+          : [],
+        ward: query.ward ? [query.ward.code, query.ward.name] : [],
         type: selectedType ? selectedType.name : '',
         status: state.selectedIcon === 'isForSale' ? 'buy' : 'rent',
+      },
+      postDetail: {
         images: images,
+        description: value || '',
+        certificate: selectedCertificate ? selectedCertificate.name : '',
         coordinate: {
           latitude: parseFloat(inputs.latitude),
           longitude: parseFloat(inputs.longitude),
         },
-      },
-      postDetail: {
-        description: value || '',
-        certificate: selectedCertificate ? selectedCertificate.name : '',
-        direction: selectedDirection ? selectedDirection.name : '',
       },
     };
 
     try {
       const request = await apiRequest.post('/posts', datas);
       navigate('/' + request.data._id);
+      showToast('success', 'Đăng tin thành công');
     } catch (error) {
       console.error('Error creating post:', error);
     }
@@ -281,19 +293,21 @@ function AddPostPage() {
               <div className='flex flex-col gap-y-1'>
                 <label htmlFor='bedroom'>Phòng ngủ</label>
                 <InputField
-                  type={'number'}
+                  type={'text'}
                   id={'bedroom'}
                   name={'bedroom'}
                   placeholder={'Số phòng ngủ'}
+                  onInput={handleNumberInput}
                 />
               </div>
               <div className='flex flex-col gap-y-1'>
                 <label htmlFor='bathroom'>Phòng tắm</label>
                 <InputField
-                  type={'number'}
+                  type={'text'}
                   id={'bathroom'}
                   name={'bathroom'}
                   placeholder={'Số phòng tắm'}
+                  onInput={handleNumberInput}
                 />
               </div>
               <div className='flex flex-col gap-y-1'>

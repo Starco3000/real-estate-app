@@ -9,10 +9,12 @@ import PostDetailPage from './pages/PostDetailPage';
 import ListPostPage from './pages/ListPostPage';
 import AddPostPage from './pages/AddPostPage';
 import {
+  favoritePostLoader,
   latestPostsLoader,
   listPostLoader,
   postDetailLoader,
 } from './services/dataLoaders';
+import FavoritePostPage from './pages/FavoritePostPage';
 
 function App() {
   const router = createBrowserRouter([
@@ -58,6 +60,15 @@ function App() {
           path: '/add-post',
           element: <AddPostPage />,
         },
+        // {
+        //   path: '/update-post/:id',
+        //   element: <AddPostPage />,
+        // },
+        {
+          path: '/favorites',
+          element: <FavoritePostPage />,
+          loader: favoritePostLoader,
+        }
       ],
     },
   ]);
