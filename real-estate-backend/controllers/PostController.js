@@ -1,77 +1,6 @@
 const mongoose = require('mongoose');
 const Models = require('../models/Models');
 
-// async function getPosts(request, response) {
-//   try {
-//     const {
-//       status,
-//       address,
-//       province,
-//       district,
-//       ward,
-//       type,
-//       bedroom,
-//       direction,
-//       minPrice,
-//       maxPrice,
-//       size,
-//       page = 1,
-//       pageSize = 10,
-//     } = request.query;
-
-//     const minPriceNum = minPrice ? Number(minPrice) : null;
-//     const maxPriceNum = maxPrice ? Number(maxPrice) : null;
-
-//     // Build the query object based on the provided parameters
-//     const query = {
-//       ...(status && { status }),
-//       ...(address && { address: { $regex: address, $options: 'i' } }),
-//       ...(province && { province }),
-//       ...(district && { district }),
-//       ...(ward && { ward }),
-//       ...(type && { type }),
-//       ...(bedroom && { bedroom }),
-//       ...(direction && { direction }),
-//       ...(size && { size }),
-//       ...(minPriceNum !== null &&
-//         maxPriceNum !== null && {
-//           price: {
-//             $gte: minPriceNum || undefined,
-//             $lte: maxPriceNum || undefined,
-//           },
-//         }),
-//     };
-
-//     console.log('Query:', minPriceNum, maxPriceNum, query);
-
-//     // Calculate skip and limit values for pagination
-//     const skip = (page - 1) * pageSize;
-//     const limit = parseInt(pageSize);
-
-//     // Fetch the total number of posts matching the query
-//     const totalPosts = await Models.Post.countDocuments(query);
-
-//     // Fetch the posts with pagination
-//     const posts = await Models.Post.find(query)
-//       .populate('postDetailId')
-//       .skip(skip)
-//       .limit(limit);
-
-//     // Calculate the total number of pages
-//     const totalPages = Math.ceil(totalPosts / pageSize);
-
-//     // Return the posts and total pages to the client
-//     response.status(200).json({
-//       posts,
-//       totalPages,
-//       success: true,
-//     });
-//   } catch (error) {
-//     console.error('Error fetching posts:', error);
-//     response.status(500).json({ message: 'Failed to get posts!', error: true });
-//   }
-// }
-
 async function getPosts(request, response) {
   try {
     const {
@@ -165,12 +94,10 @@ async function getPosts(request, response) {
 
     // Fetch the posts with pagination
     const posts = await Models.Post.find(query)
-      .populate('postDetailId', 'description')
+      .populate('postDetailId', 'description images')
       .populate('userId', 'avatar name phone')
       .skip(skip)
       .limit(limit);
-
-    // console.log('Fetched Posts:', posts);
 
     // Calculate the total number of pages
     const totalPages = Math.ceil(totalPosts / pageSize);
@@ -191,15 +118,8 @@ async function getPost(request, response) {
   const _id = request.params.id;
   try {
     const post = await Models.Post.findById(_id)
-      .populate('postDetailId')
-      .populate({
-        path: 'userId',
-        select: {
-          avatar: true,
-          phone: true,
-          name: true,
-        },
-      });
+      .populate('postDetailId', 'description images certificate coordinate')
+      .populate('userId', 'avatar name phone');
     response.status(200).json({ post, success: true });
   } catch (error) {
     console.log(error);
@@ -234,7 +154,38 @@ async function addPost(request, response) {
 
 async function updatePost(request, response) {
   try {
-    response.status(200).json({});
+    const postId = request.params.id;
+    const updateData = request.body;
+
+    // Cập nhật dữ liệu postData
+    const updatedPost = await Models.Post.findByIdAndUpdate(
+      postId,
+      updateData.postData,
+      { new: true },
+    );
+
+    if (!updatedPost) {
+      return response
+        .status(404)
+        .json({ message: 'Post not found!', error: true });
+    }
+
+    // Cập nhật dữ liệu postDetail
+    const updatedPostDetail = await Models.PostDetail.findOneAndUpdate(
+      { postId: postId },
+      updateData.postDetail,
+      { new: true },
+    );
+
+    if (!updatedPostDetail) {
+      return response
+        .status(404)
+        .json({ message: 'PostDetail not found!', error: true });
+    }
+
+    response
+      .status(200)
+      .json({ updatedPost, updatedPostDetail, success: true });
   } catch (error) {
     console.log(error);
     response
@@ -279,16 +230,13 @@ async function deletePost(request, response) {
         .status(404)
         .json({ message: 'Post not found!', error: true });
     }
-
     // Check if the user is the owner of the post or an admin
     if (post.userId.toString() !== tokenUserId && !isAdmin) {
-      return response
-        .status(403)
-        .json({
-          message:
-            'Access denied. You do not have permission to delete this post.',
-          error: true,
-        });
+      return response.status(403).json({
+        message:
+          'Access denied. You do not have permission to delete this post.',
+        error: true,
+      });
     }
 
     // Delete the post
@@ -307,19 +255,11 @@ async function deletePost(request, response) {
 async function getLatestPost(request, response) {
   try {
     const latestPosts = await Models.Post.find()
-      .populate({
-        path: 'userId',
-        select: {
-          avatar: true,
-          name: true,
-        },
-      })
+      .populate('postDetailId', 'images ')
+      .populate('userId', 'avatar name')
       .sort({ createdAt: -1 })
       .limit(10); //Limit 10 post could render
-    response.status(200).json({
-      posts: latestPosts,
-      success: true,
-    });
+    response.status(200).json({ posts: latestPosts, success: true });
   } catch (error) {
     console.error('Error fetching latest posts:', error);
     response.status(500).json({ error: 'Failed to fetch latest posts' });
@@ -333,5 +273,4 @@ module.exports = {
   updatePost,
   deletePost,
   getLatestPost,
-  // searchPosts,
 };

@@ -8,6 +8,15 @@ const CoordinateSchema = new mongoose.Schema(
   },
   { _id: false, versionKey: false },
 );
+
+// const LocationSchema = new mongoose.Schema(
+//   {
+//     name: { type: String, required: true },
+//     code: { type: Number, required: true },
+//   },
+//   { _id: false, versionKey: false },
+// );
+
 const PostSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
@@ -15,17 +24,14 @@ const PostSchema = new mongoose.Schema(
     size: { type: Number },
     price: { type: Number },
     address: { type: String },
-    province: { type: String },
-    district: { type: String },
-    ward: { type: String },
-    bedroom: { type: Number },
-    bathroom: { type: Number },
-    images: { type: [String], default: [] },
+    province: { type: [String] },
+    district: { type: [String] },
+    ward: { type: [String] },
+    bedroom: { type: String },
+    bathroom: { type: String },
     type: { type: String },
-    status: {
-      type: String,
-    },
-    coordinate: { type: CoordinateSchema, required: true },
+    status: { type: String },
+    direction: { type: String },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -43,9 +49,10 @@ const PostSchema = new mongoose.Schema(
 const PostDetailSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
+    images: { type: [String], default: [] },
     description: { type: String },
     certificate: { type: String },
-    direction: { type: String },
+    coordinate: { type: CoordinateSchema, required: true },
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post',
