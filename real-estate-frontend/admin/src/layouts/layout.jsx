@@ -10,7 +10,6 @@ function Layout() {
       <div className='h-[100vh-100px]'>
         <Outlet />
       </div>
-      {/* <Footer /> */}
     </div>
   );
 }
@@ -31,7 +30,6 @@ function RequireAuth() {
           <Toast />
           <Outlet />
         </div>
-        {/* <Footer /> */}
       </div>
     );
   }

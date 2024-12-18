@@ -128,6 +128,7 @@ function UpdatePostPage() {
   const handleNumberInput = (e) => {
     const value = e.target.value;
     e.target.value = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+    handleChange(e); 
   };
 
   const handlePriceChange = (value) => {
@@ -152,7 +153,6 @@ function UpdatePostPage() {
 
   const handleUploadPhotos = async (e) => {
     const files = Array.from(e.target.files);
-    console.log('file', files);
     if (!files) return;
     const folder = 'posts'; // LocationLocation to store images
     const uploadPhoto = await uploadFiles(files, folder); // Upload files to cloudinary
