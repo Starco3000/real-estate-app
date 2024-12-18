@@ -1,10 +1,10 @@
 import React, { Suspense } from 'react';
-import banner from '../assets/banner-HCM-city.jpg';
+import { Await, useLoaderData } from 'react-router-dom';
+import Images from '../components/Images';
 import EstateCard from '../components/EstateCard';
 import ProjectCard from '../components/ProjectCard';
 import SliderComponent from '../components/slider/SliderComponent';
 import HomePageSearch from '../components/search/HomePageSearch';
-import { Await, useLoaderData } from 'react-router-dom';
 
 function HomePage() {
   const data = useLoaderData();
@@ -13,7 +13,7 @@ function HomePage() {
       <div className='flex flex-col h-full'>
         <div className='relative '>
           <img
-            src={banner}
+            src={Images.banner}
             alt='banner'
             className='h-[250px] lg:h-[450px] w-full object-cover lg:object-fill mt-16'
           />

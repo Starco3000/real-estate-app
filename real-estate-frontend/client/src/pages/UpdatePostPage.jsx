@@ -1,24 +1,35 @@
-import { useReducer, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import apiRequest from './../services/apiRequest';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import apiRequest from '../services/apiRequest';
+import { postDetailLoader } from '../services/dataLoaders';
 import useLocationData from '../hooks/useLocationData';
-import { uploadFiles } from '../helpers/uploadFile';
-import { Types, Directions, Certificates } from '../services/data';
+import SizeInput from '../components/inputField/SizeInput';
+import PriceInput from '../components/inputField/PriceInput';
 import Selector from '../components/Selector';
 import InputField from '../components/inputField/InputField';
 import RichText from '../components/RichText';
-import SizeInput from '../components/inputField/SizeInput';
-import PriceInput from '../components/inputField/PriceInput';
-import { showToast } from '../components/Toast';
+import { uploadFiles } from '../helpers/uploadFile';
+import { Types, Directions, Certificates } from '../services/data';
 import { Rent, RentFill, Sale, SaleFill, Times } from '../components/Icons';
+import { showToast } from '../components/Toast';
 import {
   changeIconReducer,
   SELECT_FOR_RENT,
   SELECT_FOR_SALE,
 } from '../hooks/useReducer';
 
-function AddPostPage() {
-  const { provinces, districts, wards, query, setQuery } = useLocationData();
+function UpdatePostPage() {
+  const { id } = useParams();
+  const {
+    provinces,
+    districts,
+    wards,
+    query,
+    setQuery,
+    setSelectedProvince,
+    setSelectedDistrict,
+    setSelectedWard,
+  } = useLocationData();
   const [selectedType, setSelectedType] = useState(null);
   const [selectedDirection, setSelectedDirection] = useState(null);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
@@ -43,6 +54,68 @@ function AddPostPage() {
   const uploadPhotoRef = useRef();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchPostData = async () => {
+      try {
+        const data = await postDetailLoader({ params: { id } });
+        const postDetailId = data.post.postDetailId;
+        const price = data.post.price;
+        const priceDetails =
+          price >= 1e9
+            ? {
+                amount: price / 1e9,
+                unit: 'tỷ',
+                convertedValue: price,
+              }
+            : {
+                amount: price / 1e6,
+                unit: 'triệu',
+                convertedValue: price,
+              };
+        setFormValues({
+          title: data.post.title,
+          address: data.post.address,
+          bedroom: data?.post?.bedroom,
+          bathroom: data?.post?.bathroom,
+          latitude: postDetailId.coordinate.latitude,
+          longitude: postDetailId.coordinate.longitude,
+          price: priceDetails,
+          size: {
+            amount: data.post.size,
+            unit: 'm²',
+            convertedValue: data.post.size,
+          },
+        });
+        setImages(postDetailId.images);
+        setSelectedType({ name: data.post.type });
+        setSelectedProvince({
+          code: data?.post?.province[0],
+          name: data?.post?.province[1],
+        });
+        setSelectedDistrict({
+          code: data?.post?.district[0],
+          name: data?.post?.district[1],
+        });
+        setSelectedWard({
+          code: data?.post?.ward[0],
+          name: data?.post?.ward[1],
+        });
+        setSelectedDirection({
+          name: data.post.direction,
+        });
+        setSelectedCertificate({ name: postDetailId.certificate });
+        setValue(postDetailId.description);
+        dispatch({
+          type: data.post.status === 'buy' ? SELECT_FOR_SALE : SELECT_FOR_RENT,
+        });
+      } catch (error) {
+        console.error('Failed to fetch post data', error);
+      }
+    };
+
+    fetchPostData();
+  }, [id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevValues) => ({
@@ -53,6 +126,7 @@ function AddPostPage() {
   const handleNumberInput = (e) => {
     const value = e.target.value;
     e.target.value = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+    handleChange(e); 
   };
 
   const handlePriceChange = (value) => {
@@ -79,7 +153,7 @@ function AddPostPage() {
     const files = Array.from(e.target.files);
     console.log('file', files);
     if (!files) return;
-    const folder = 'posts'; // Location to store images
+    const folder = 'posts'; // LocationLocation to store images
     const uploadPhoto = await uploadFiles(files, folder); // Upload files to cloudinary
     const photoUrls = uploadPhoto.map((photo) => photo.url); // Get url from response
     console.log('uploadPhoto', photoUrls);
@@ -92,6 +166,11 @@ function AddPostPage() {
     if (!formValues.address) newErrors.address = 'Địa chỉ là bắt buộc';
     if (!formValues.latitude) newErrors.latitude = 'Vĩ độ là bắt buộc';
     if (!formValues.longitude) newErrors.longitude = 'Tung độ là bắt buộc';
+    if (!query.province) newErrors.province = 'Tỉnh/thành phố là bắt buộc';
+    if (!query.district) newErrors.district = 'Quận/huyện là bắt buộc';
+    if (!query.ward) newErrors.ward = 'Phường/xã là bắt buộc';
+    if (!formValues.bedroom) newErrors.bedroom = 'Số phòng ngủ là bắt buộc';
+    if (!formValues.bathroom) newErrors.bathroom = 'Số phòng tắm là bắt buộc';
     if (images.length < 4) newErrors.images = 'Cần tải lên ít nhất 4 hình ảnh';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -132,8 +211,8 @@ function AddPostPage() {
         title: inputs.title,
         size: convertedSize,
         price: convertedPrice,
-        bedroom: inputs.bedroom ? parseInt(inputs.bedroom) : null,
-        bathroom: inputs.bathroom ? parseInt(inputs.bathroom) : null,
+        bedroom: inputs.bedroom,
+        bathroom: inputs.bathroom,
         direction: selectedDirection ? selectedDirection.name : '',
         address: inputs.address,
         province: query.province
@@ -158,11 +237,12 @@ function AddPostPage() {
     };
 
     try {
-      const request = await apiRequest.post('/posts', datas);
-      navigate('/' + request.data._id);
-      showToast('success', 'Đăng tin thành công');
+      const request = await apiRequest.put(`/posts/${id}`, datas);
+      navigate('/' + request.data.updatedPost._id);
+      showToast('success', 'Cập nhật tin đăng thành công');
     } catch (error) {
       console.error('Error creating post:', error);
+      showToast('error', 'Cập nhật tin đăng thất bại');
     }
   };
 
@@ -172,7 +252,7 @@ function AddPostPage() {
         className='my-20 max-w-[832px] mx-auto flex flex-col gap-y-5'
         onSubmit={handleSubmit}
       >
-        <h1 className='font-semibold text-2xl pt-6'>Tạo tin đăng mới</h1>
+        <h1 className='font-semibold text-2xl pt-6'>Chỉnh sửa tin đăng</h1>
         {/* Select status of estate */}
         <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
           <h2 className='font-medium text-base'>Nhu cầu đăng tin</h2>
@@ -212,34 +292,53 @@ function AddPostPage() {
         {/* Choose address */}
         <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
           <h2 className='font-medium text-base'>Địa chỉ bất động sản</h2>
-          <div className='grid grid-cols-3 gap-x-4'>
+          <div className='h-14 grid grid-cols-3 gap-x-4'>
             {/* <Selector /> */}
-            <Selector
-              selected={query.province}
-              setSelected={(value) => {
-                setQuery((prev) => ({ ...prev, province: value }));
-              }}
-              data={provinces}
-              placeholder='Chọn tỉnh/thành phố'
-            />
-            <Selector
-              selected={query.district}
-              setSelected={(value) => {
-                setQuery((prev) => ({ ...prev, district: value }));
-              }}
-              data={districts}
-              disabled={!query.province}
-              placeholder='Chọn quận/huyện'
-            />
-            <Selector
-              selected={query.ward}
-              setSelected={(value) => {
-                setQuery((prev) => ({ ...prev, ward: value }));
-              }}
-              data={wards}
-              disabled={!query.district}
-              placeholder='Chọn phường/xã'
-            />
+            <div>
+              <Selector
+                selected={query.province}
+                setSelected={(value) => {
+                  setQuery((prev) => ({ ...prev, province: value }));
+                }}
+                data={provinces}
+                placeholder='Chọn tỉnh/thành phố'
+              />
+              {errors.province && (
+                <i className='font-light text-red-400 mt-2'>
+                  * {errors.province}
+                </i>
+              )}
+            </div>
+            <div>
+              <Selector
+                selected={query.district}
+                setSelected={(value) => {
+                  setQuery((prev) => ({ ...prev, district: value }));
+                }}
+                data={districts}
+                disabled={!query.province}
+                placeholder='Chọn quận/huyện'
+              />
+              {errors.district && (
+                <i className='font-light text-red-400 mt-2'>
+                  * {errors.district}
+                </i>
+              )}
+            </div>
+            <div>
+              <Selector
+                selected={query.ward}
+                setSelected={(value) => {
+                  setQuery((prev) => ({ ...prev, ward: value }));
+                }}
+                data={wards}
+                disabled={!query.district}
+                placeholder='Chọn phường/xã'
+              />
+              {errors.ward && (
+                <i className='font-light text-red-400 mt-2'>* {errors.ward}</i>
+              )}
+            </div>
           </div>
           <label htmlFor='address'>Địa chỉ chi tiết</label>
           <InputField
@@ -297,6 +396,11 @@ function AddPostPage() {
                   placeholder={'Số phòng ngủ'}
                   onInput={handleNumberInput}
                 />
+                {errors.bedroom && (
+                  <i className='font-light text-red-400 mt-2'>
+                    * {errors.bedroom}
+                  </i>
+                )}
               </div>
               <div className='flex flex-col gap-y-1'>
                 <label htmlFor='bathroom'>Phòng tắm</label>
@@ -307,6 +411,11 @@ function AddPostPage() {
                   placeholder={'Số phòng tắm'}
                   onInput={handleNumberInput}
                 />
+                {errors.bathroom && (
+                  <i className='font-light text-red-400 mt-2'>
+                    * {errors.bathroom}
+                  </i>
+                )}
               </div>
               <div className='flex flex-col gap-y-1'>
                 <label htmlFor='certificate'>Pháp lý</label>
@@ -427,8 +536,8 @@ function AddPostPage() {
         </div>
         {/* Submit */}
         <div className='w-full flex justify-end'>
-          <button className='w-24 h-12 bg-primary font-medium text-white rounded-md'>
-            Đăng tin
+          <button className='w-24 h-12 bg-primary font-medium text-white rounded-md hover:opacity-80'>
+            Cập nhập
           </button>
         </div>
       </form>
@@ -436,4 +545,4 @@ function AddPostPage() {
   );
 }
 
-export default AddPostPage;
+export default UpdatePostPage;

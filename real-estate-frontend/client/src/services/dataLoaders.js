@@ -23,64 +23,24 @@ export const latestPostsLoader = async () => {
   });
 };
 
+export const userPostLoader = async ({ request, params }) => {
+  try {
+    const url = new URL(request.url);
+    const query = url.searchParams.toString();
+    const response = await apiRequest('/users/userPosts?' + query);
+    return defer({
+      userPosts: response.data,
+    })
+  } catch (error) {
+    
+  }
+}
+
 export const favoritePostLoader = async ({ request, params }) => {
-  const postPromise = await apiRequest('/favorites');
+  const url = new URL(request.url);
+  const query = url.searchParams.toString();
+  const postPromise = await apiRequest('/favorites?' + query);
   return defer({
-    postResponse: postPromise,
+    postResponse: postPromise.data,
   });
 };
-
-// export const postDetailLoader = async ({ request, params }) => {
-//   try {
-//     const response = await apiRequest(`/posts/${params.id}`);
-//     return response.data;
-//   } catch (error) {
-//     // Xử lý lỗi nếu không tìm thấy bài đăng
-//     console.error('Error loading post details:', error);
-//     throw new Response('Not Found', { status: 404 });
-//   }
-// };
-
-// export const listPostLoader = async ({ request }) => {
-//   try {
-//     const url = new URL(request.url);
-//     const query = url.searchParams.toString();
-
-//     // Kiểm tra và làm sạch query params
-//     const filteredQuery = Array.from(url.searchParams.entries())
-//       .filter(([_, value]) => value !== '')
-//       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-//       .join('&');
-
-//     const postPromise = apiRequest(`/posts?${filteredQuery}`);
-
-//     return defer({
-//       postResponse: postPromise,
-//     });
-//   } catch (error) {
-//     console.error('Error loading post list:', error);
-//     return defer({
-//       postResponse: Promise.resolve({
-//         data: {
-//           posts: [],
-//           totalPages: 0
-//         },
-//         error: true
-//       }),
-//     });
-//   }
-// };
-
-// export const latestPostsLoader = async () => {
-//   try {
-//     const response = await apiRequest('/posts/latest-posts');
-//     return defer({
-//       latestPosts: response.data.posts || [],
-//     });
-//   } catch (error) {
-//     console.error('Error loading latest posts:', error);
-//     return defer({
-//       latestPosts: [],
-//     });
-//   }
-// };

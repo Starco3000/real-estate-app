@@ -38,27 +38,11 @@ export const MenusRightIsUser = (currentUser) => {
     name: currentUser?.user?.username,
     hasSubMenu: true,
     subMenu: [
-      {
-        name: 'Trang chủ',
-        icon: FiHome,
-        path: '/',
-      },
-      {
-        name: 'Thông tin cá nhân',
-        icon: FaRegUser,
-        path: '/profile',
-      },
-      { name: 'Quản lý tin đăng', icon: FaListUl, path: '/post' },
-      {
-        name: 'Tin đăng đã lưu',
-        icon: FaRegHeart,
-        path: '/favorite',
-      },
-      {
-        name: 'Tin nhắn',
-        icon: FaRegCommentDots,
-        path: '/message',
-      },
+      { name: 'Trang chủ', icon: FiHome, path: '/' },
+      { name: 'Thông tin cá nhân', icon: FaRegUser, path: '/profile' },
+      { name: 'Quản lý tin đăng', icon: FaListUl, path: '/user-posts' },
+      { name: 'Tin đăng đã lưu', icon: FaRegHeart, path: '/favorites' },
+      { name: 'Tin nhắn', icon: FaRegCommentDots, path: '/message' },
     ],
   };
 };
@@ -341,5 +325,5 @@ export const Bedrooms = [
   { id: 3, name: '3', value: 3 },
   { id: 4, name: '4', value: 4 },
   { id: 5, name: '5', value: 5 },
-  { id: 6, name: '5+', value: "5+" },
+  { id: 6, name: '5+', value: '5+' },
 ];

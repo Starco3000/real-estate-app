@@ -8,7 +8,7 @@ import SliderInPost from '../components/Slider/SliderInPost';
 import InteractiveMap from '../components/map/GoogleMap';
 import { formatPrice, formatSize, formatDate } from '../components/FormatValue';
 import apiRequest from '../services/apiRequest';
-import Toast, { showToast } from '../components/Toast';
+import { showToast } from '../components/Toast';
 import OtherEstate from '../components/OtherEstate';
 
 const directionMapping = {
@@ -28,14 +28,12 @@ function PostDetailPage() {
   const postDetailInfo = post.post.postDetailId;
   const agentInfo = post.post.userId;
   const [isFavorite, setIsFavorite] = useState(false);
-  console.log('postInfo:', postInfo);
 
   useEffect(() => {
     const checkFavorite = async () => {
       if (!postInfo || !postInfo._id) return;
       try {
         const response = await apiRequest.get('/favorites');
-        console.log('favorites:', response.data.favorites);
         const favorites = response.data.favorites;
         const isFav = favorites.some(
           (favorite) => favorite.postId._id === postInfo._id,
@@ -121,7 +119,6 @@ function PostDetailPage() {
                   <IoMdHeart className='text-xl text-red-400' />
                 )}
               </button>
-              <Toast />
             </div>
           </div>
 

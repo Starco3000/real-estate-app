@@ -13,8 +13,11 @@ import {
   latestPostsLoader,
   listPostLoader,
   postDetailLoader,
+  userPostLoader,
 } from './services/dataLoaders';
 import FavoritePostPage from './pages/FavoritePostPage';
+import UpdatePostPage from './pages/UpdatePostPage';
+import UserPostPage from './pages/UserPostPage';
 
 function App() {
   const router = createBrowserRouter([
@@ -60,14 +63,19 @@ function App() {
           path: '/add-post',
           element: <AddPostPage />,
         },
-        // {
-        //   path: '/update-post/:id',
-        //   element: <AddPostPage />,
-        // },
+        {
+          path: '/update-post/:id',
+          element: <UpdatePostPage />,
+        },
         {
           path: '/favorites',
           element: <FavoritePostPage />,
           loader: favoritePostLoader,
+        },
+        {
+          path: '/user-posts',
+          element:<UserPostPage />,
+          loader: userPostLoader,
         }
       ],
     },

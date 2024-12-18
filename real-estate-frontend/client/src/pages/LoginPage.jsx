@@ -1,29 +1,15 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
-import wallpaper from '../assets/city-wallpaper.jpg';
+import Images from '../components/Images.jsx';
 import apiRequest from '../services/apiRequest';
+import { showToast } from '../components/Toast';
 
 function LoginPage() {
-  // const [data, setData] = useState({
-  //   email: '',
-  //   password: '',
-  // });
   const { updateUser } = useContext(AuthContext);
-
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  // const handleOnChange = (element) => {
-  //   const { name, value } = element.target;
-  //   setData((prev) => {
-  //     return {
-  //       ...prev,
-  //       [name]: value,
-  //     };
-  //   });
-  // };
 
   const handleSumbit = async (element) => {
     element.preventDefault();
@@ -42,8 +28,10 @@ function LoginPage() {
         updateUser(response.data);
         console.log('response when login success', response.data);
         navigate('/');
+        showToast('Đăng nhập thành công', 'success');
       } else {
         setError(response?.data?.message);
+        showToast('Đăng nhập thất bại', 'error');
       }
     } catch (err) {
       setError(err?.response?.data?.message);
@@ -56,7 +44,7 @@ function LoginPage() {
     <div className=' flex justify-center items-center w-full h-[100vh] relative'>
       <div className='w-full h-full'>
         <img
-          src={wallpaper}
+          src={Images.wallpaper}
           alt='Wallpaper'
           className='absolute w-full h-[100vh] object-cover md:object-fill z-0'
         />

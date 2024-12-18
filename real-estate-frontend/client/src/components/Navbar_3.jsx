@@ -1,17 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import apiRequest from '../services/apiRequest';
+import { AuthContext } from '../contexts/AuthContext';
+import Avatar from './Avatar';
+import Images from '../components/Images';
+import { Bars, LogOut, Times } from './Icons';
 import {
   MenusLeft,
   MenusRightIsUser,
   MenusRightNotUser,
 } from '../services/data';
-import apiRequest from '../services/apiRequest';
-import { AuthContext } from '../contexts/AuthContext';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import { FiLogOut } from 'react-icons/fi';
-import Avatar from './Avatar';
-import logo from '../assets/logo-navbar.png';
-import noavatar from '../assets/noavatar.jpg';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +36,7 @@ function Navbar() {
         {/* Logo KimDienHomes */}
         <Link to='/' className='m-auto'>
           <img
-            src={logo}
+            src={Images.logo}
             alt='logo KimDienHomes'
             className='w-48 object-fill'
           />
@@ -50,7 +48,7 @@ function Navbar() {
             className='lg:hidden z-50 cursor-pointer'
             onClick={toggleDrawer}
           >
-            {isOpen ? <FaTimes /> : <FaBars />}
+            {isOpen ? <Times /> : <Bars />}
           </span>
           <ul
             className={`lg:flex md:items-center hidden bg-white w-full justify-between absolute top-20 left-6 lg:inset-7 z-50 h-screen lg:h-auto`}
@@ -68,7 +66,11 @@ function Navbar() {
             {currentUser ? (
               <div className='flex gap-x-7'>
                 <div className='flex items-center relative float-right gap-x-3 group'>
-                  <Avatar src={menus.img || noavatar} width={40} height={40} />
+                  <Avatar
+                    src={menus.img || Images.noavatar}
+                    width={40}
+                    height={40}
+                  />
                   <span className='cursor-pointer'>{menus.name}</span>
                   <div
                     className='absolute left-full -translate-x-full top-7 
@@ -96,7 +98,7 @@ function Navbar() {
                           className='w-full h-9 flex justify-center items-center gap-x-3 p-4 border-2 border-gray-200 rounded '
                           onClick={handleLogout}
                         >
-                          <FiLogOut />
+                          <LogOut />
                           Logout
                         </button>
                       )}
@@ -133,7 +135,7 @@ function Navbar() {
               {currentUser ? (
                 <div className='flex justify-center items-center gap-x-3'>
                   <Avatar
-                    src={currentUser?.user?.avatar || noavatar}
+                    src={currentUser?.user?.avatar || Images.noavatar}
                     width={40}
                     height={40}
                   />
@@ -143,7 +145,7 @@ function Navbar() {
                 <Link to='/login'>Đăng nhập</Link>
               )}
               <span className='cursor-pointer' onClick={toggleDrawer}>
-                <FaTimes />
+                <Times />
               </span>
             </div>
 
@@ -189,7 +191,7 @@ function Navbar() {
                 className='w-full flex justify-center items-center gap-x-3 p-4 border-2 border-gray-200 rounded '
                 onClick={handleLogout}
               >
-                <FiLogOut />
+                <LogOut />
                 Logout
               </button>
             )}

@@ -4,7 +4,7 @@ import Avatar from '../components/Avatar';
 import apiRequest from '../services/apiRequest';
 import noavatar from '../assets/noavatar.jpg';
 import { uploadFile } from '../helpers/uploadFile';
-import Toast, { showToast } from '../components/Toast';
+import { showToast } from '../components/Toast';
 
 function ProfilePage() {
   const [error, setError] = useState('');
@@ -153,7 +153,6 @@ function ProfilePage() {
             <button className='w-28 h-10 bg-primary text-white rounded-md'>
               Cập nhập
             </button>
-            <Toast />
           </div>
         </form>
       </div>
