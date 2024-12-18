@@ -2,12 +2,59 @@ const mongoose = require('mongoose');
 const Models = require('../models/Models');
 
 async function getFavorites(request, response) {
-  const userId = request.userId;
+  const tokenUserId = request.userId;
 
   try {
-    const favorites = await Models.Favorite.find({ userId }).populate('postId');
+    const { keyword, page = 1, pageSize = 10 } = request.query;
+    const query = { userId: tokenUserId };
+
+    // Calculate skip and limit values for pagination
+    const skip = (page - 1) * pageSize;
+    const limit = parseInt(pageSize);
+
+    // Fetch the total number of posts matching the query
+    const totalPosts = await Models.Post.countDocuments(query);
+
+    // Fetch the posts with pagination
+    const favorites = await Models.Favorite.find(query)
+      .populate({
+        path: 'postId',
+        populate: {
+          path: 'postDetailId',
+          select: 'images description',
+        },
+        match: {
+          ...(keyword && {
+            $or: [
+              { title: { $regex: keyword, $options: 'i' } },
+              { address: { $regex: keyword, $options: 'i' } },
+              { province: { $regex: keyword, $options: 'i' } },
+              { district: { $regex: keyword, $options: 'i' } },
+              { ward: { $regex: keyword, $options: 'i' } },
+              { type: { $regex: keyword, $options: 'i' } },
+              { status: { $regex: keyword, $options: 'i' } },
+              { direction: { $regex: keyword, $options: 'i' } },
+            ],
+          }),
+        },
+      })
+      .skip(skip)
+      .limit(limit);
+
+    // Filter out favorites where postId is null due to match conditions
+    const filteredFavorites = favorites.filter((fav) => fav.postId !== null);
+
     const favoriteCount = favorites.length;
-    response.status(200).json({ favorites, favoriteCount, success: true });
+
+    // Calculate the total number of page
+    const totalPages = Math.ceil(totalPosts / pageSize);
+
+    response.status(200).json({
+      favorites: filteredFavorites,
+      favoriteCount,
+      totalPages,
+      success: true,
+    });
   } catch (error) {
     console.log(error);
     response
@@ -28,15 +75,20 @@ async function addFavorite(request, response) {
   }
 
   try {
-     // Check if the post is already in favorites to avoid duplicates
-     const existingFavorite = await Models.Favorite.findOne({ tokenUserId, postId });
-     if (existingFavorite) {
-       return response.status(400).json({ message: 'Post is already in favorites!', success: false });
-     }
+    // Check if the post is already in favorites to avoid duplicates
+    const existingFavorite = await Models.Favorite.findOne({
+      tokenUserId,
+      postId,
+    });
+    if (existingFavorite) {
+      return response
+        .status(400)
+        .json({ message: 'Post is already in favorites!', success: false });
+    }
     const favorite = new Models.Favorite({
       _id: new mongoose.Types.ObjectId(),
       userId: tokenUserId,
-      postId
+      postId,
     });
     await favorite.save();
     response

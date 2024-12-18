@@ -5,17 +5,16 @@ const {
   getUser,
   updateUser,
   deleteUser,
+  userPosts,
 } = require('../controllers/UserController');
 
 const router = express.Router();
 
 //Customer
 router.get('/', getUsers);
-
-router.get('/:id', verifyToken, getUser);
-
+// router.get('/:id', verifyToken, getUser);
 router.put('/:id', verifyToken, updateUser);
-
 router.delete('/:id', verifyToken, deleteUser);
+router.get('/userPosts', verifyToken, userPosts);
 
 module.exports = router;
