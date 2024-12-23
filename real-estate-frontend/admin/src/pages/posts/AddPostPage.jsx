@@ -242,6 +242,9 @@ function AddPostPage() {
             onChange={handleChange}
             error={errors.address}
           />
+          {errors.address && (
+            <i className='font-light text-red-400 mt-2'>* {errors.address}</i>
+          )}
         </div>
         {/* Choose type of estate */}
         <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>

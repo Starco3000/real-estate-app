@@ -7,7 +7,14 @@ import AddPostPage from './pages/posts/AddPostPage';
 import UpdatePostPage from './pages/posts/UpdatePostPage';
 import ListPostPage from './pages/posts/ListPostPage';
 import PostDetailPage from './pages/posts/PostDetailPage';
-import { listPostLoader, postDetailLoader } from './services/dataLoaders';
+import {
+  listAccountsLoader,
+  listPostLoader,
+  postDetailLoader,
+  userPostsLoader,
+} from './services/dataLoaders';
+import ListAccountsPage from './pages/accounts/ListAccountsPage';
+import AccountListPostPage from './pages/accounts/AccountListPostPage';
 
 function App() {
   const router = createBrowserRouter([
@@ -41,12 +48,21 @@ function App() {
         {
           path: 'update-post/:id',
           element: <UpdatePostPage />,
-          
         },
         {
           path: ':id',
           element: <PostDetailPage />,
           loader: postDetailLoader,
+        },
+        {
+          path: 'users',
+          element: <ListAccountsPage />,
+          loader: listAccountsLoader,
+        },
+        {
+          path: 'users/:id/posts',
+          element: <AccountListPostPage />,
+          loader: userPostsLoader,
         },
       ],
     },

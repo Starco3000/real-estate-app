@@ -23,59 +23,20 @@ export const latestPostsLoader = async () => {
   });
 };
 
+export const listAccountsLoader = async ({ request, params }) => {
+  const url = new URL(request.url);
+  const query = url.searchParams.toString();
+  const accountsPromise = apiRequest('/admin/users?' + query);
+  return defer({
+    accountsResponse: (await accountsPromise).data.users,
+  });
+};
 
-
-// export const postDetailLoader = async ({ request, params }) => {
-//   try {
-//     const response = await apiRequest(`/posts/${params.id}`);
-//     return response.data;
-//   } catch (error) {
-//     // Xử lý lỗi nếu không tìm thấy bài đăng
-//     console.error('Error loading post details:', error);
-//     throw new Response('Not Found', { status: 404 });
-//   }
-// };
-
-// export const listPostLoader = async ({ request }) => {
-//   try {
-//     const url = new URL(request.url);
-//     const query = url.searchParams.toString();
-
-//     // Kiểm tra và làm sạch query params
-//     const filteredQuery = Array.from(url.searchParams.entries())
-//       .filter(([_, value]) => value !== '')
-//       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-//       .join('&');
-
-//     const postPromise = apiRequest(`/posts?${filteredQuery}`);
-
-//     return defer({
-//       postResponse: postPromise,
-//     });
-//   } catch (error) {
-//     console.error('Error loading post list:', error);
-//     return defer({
-//       postResponse: Promise.resolve({
-//         data: {
-//           posts: [],
-//           totalPages: 0
-//         },
-//         error: true
-//       }),
-//     });
-//   }
-// };
-
-// export const latestPostsLoader = async () => {
-//   try {
-//     const response = await apiRequest('/posts/latest-posts');
-//     return defer({
-//       latestPosts: response.data.posts || [],
-//     });
-//   } catch (error) {
-//     console.error('Error loading latest posts:', error);
-//     return defer({
-//       latestPosts: [],
-//     });
-//   }
-// };
+export const userPostsLoader = async ({ request, params }) => {
+  const url = new URL(request.url);
+  const query = url.searchParams.toString();
+  const postsPromise = apiRequest(`/admin/users?/${params.id}/posts?${query}`);
+  return defer({
+    userPosts: (await postsPromise).data.users,
+  });
+};

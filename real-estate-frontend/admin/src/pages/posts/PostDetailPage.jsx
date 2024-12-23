@@ -5,7 +5,7 @@ import Avatar from '../../components/Avatar';
 import SliderInPost from '../../components/slider/SliderInPost';
 import Images from '../../components/Images';
 import { ArrowLeft, Favorite } from '../../components/Icons';
-// import InteractiveMap from '../components/map/GoogleMap';
+import Map from '../../components/map/Map';
 import {
   formatPrice,
   formatSize,
@@ -125,8 +125,7 @@ function PostDetailPage() {
               <div className='flex justify-between border-b-[1px] border-gray-200'>
                 <span>Hướng nhà</span>
                 <span className='text-primary font-bold'>
-                  {directionMapping[postInfo.direction] ||
-                    postInfo.direction}
+                  {directionMapping[postInfo.direction] || postInfo.direction}
                 </span>
               </div>
               <div className='flex justify-between border-b-[1px] border-gray-200'>
@@ -146,7 +145,13 @@ function PostDetailPage() {
             {/* Map */}
             <h2 className='font-medium text-lg mt-10'>Vị trí bất động sản</h2>
             <div className='w-full h-[300px] bg-green-300 mt-4'>
-              {/* <InteractiveMap items={[postInfo]} /> */}
+              <Map
+                isReadOnly={true}
+                initialPosition={[
+                  postDetailInfo.coordinate.latitude,
+                  postDetailInfo.coordinate.longitude,
+                ]}
+              />
             </div>
 
             {/* Post Infomation */}
