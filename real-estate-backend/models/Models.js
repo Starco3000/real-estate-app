@@ -152,9 +152,9 @@ const UserSchema = new mongoose.Schema(
     avatar: { type: String, default: null },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    // posts: { type: [PostSchema], default: [] },
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     chats: { type: [ChatSchema], default: [] },
-    favorites: { type: [FavoriteSchema], default: [] },
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   },
   { versionKey: false },
 );

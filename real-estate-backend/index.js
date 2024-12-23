@@ -6,6 +6,7 @@ const authRoute = require('./routes/authRoute.js');
 const testRoute = require('./routes/testRoute.js');
 const userRoute = require('./routes/userRoute.js');
 const favoriteRoute = require('./routes/favoriteRoute.js');
+const newsRoute = require('./routes/newsRoute.js');
 const cookiesParser = require('cookie-parser');
 const connectDB = require('./config/connectDB');
 
@@ -43,10 +44,13 @@ app.use('/api/users', userRoute);
 app.use('/api/posts', postRoute);
 app.use('/api/test', testRoute);
 app.use('/api/favorites', favoriteRoute);
+app.use('/api/news', newsRoute);
 
 //api admin endpoints
 app.use('/api/admin/posts', postRoute);
-// app.use('/api/admin/posts', postRoute);
+app.use('/api/admin/users', userRoute);
+app.use('/api/admin/news', newsRoute);
+
 // app.use('/api/admin/posts', postRoute);
 
 connectDB().then(() => {

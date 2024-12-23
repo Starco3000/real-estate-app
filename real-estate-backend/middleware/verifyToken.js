@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
       console.log('Token verification failed:', err);
       return res.status(403).json({ message: 'Token is not Valid!' });
     }
-    console.log('Payload:', payload);
+    // console.log('Payload:', payload);
     req.userId = payload.id; // Set the req.user object with the payload from the token
     next();
   });
@@ -46,6 +46,7 @@ const verifyAdminToken = async (req, res, next) => {
       console.log('Token verification failed:', err);
       return res.status(403).json({ message: 'Token is not Valid!' });
     }
+    console.log('Token payload:', payload); // Log payload to check its content
     try {
       const admin = await Models.Admin.findById(payload._id);
       if (!admin) {

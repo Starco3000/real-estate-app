@@ -7,12 +7,14 @@ const {
   updatePost,
   deletePost,
   getLatestPost,
+  getTopProvinces,
 } = require('../controllers/PostController.js');
 
 const router = express.Router();
 
 // Customer routes
 router.get('/latest-posts', getLatestPost);
+router.get('/top-provinces', getTopProvinces);
 router.get('/', getPosts);
 router.get('/:id', getPost);
 router.post('/', verifyToken, addPost);

@@ -94,7 +94,7 @@ async function getPosts(request, response) {
 
     // Fetch the posts with pagination
     const posts = await Models.Post.find(query)
-      .populate('postDetailId', 'description images')
+      .populate('postDetailId', 'description images coordinate')
       .populate('userId', 'avatar name phone')
       .skip(skip)
       .limit(limit);
@@ -144,6 +144,9 @@ async function addPost(request, response) {
     });
     await Models.Post.findByIdAndUpdate(newPost._id, {
       postDetailId: postDetail._id,
+    });
+    await Models.User.findByIdAndUpdate(tokenUserId, {
+      $push: { posts: newPost._id },
     });
     response.status(200).json(newPost);
   } catch (error) {
@@ -241,6 +244,7 @@ async function deletePost(request, response) {
 
     // Delete the post
     await Models.Post.findByIdAndDelete(_id);
+    await Models.PostDetail.findByIdAndDelete(post.postDetailId);
     response
       .status(200)
       .json({ message: 'Post deleted successfully!', success: true });
@@ -266,6 +270,30 @@ async function getLatestPost(request, response) {
   }
 }
 
+async function getTopProvinces(request, response) {
+  try {
+    const topProvinces = await Models.Post.aggregate([
+      {
+        $group: {
+          _id: '$province', // Nhóm theo trường province
+          totalPosts: { $sum: 1 }, // Đếm số lượng bài post
+        },
+      },
+      {
+        $sort: { totalPosts: -1 }, // Sắp xếp theo số lượng bài post giảm dần
+      },
+      {
+        $limit: 5, // Lấy ra 5 tỉnh có số lượng bài post nhiều nhất
+      },
+    ]);
+
+    response.status(200).json({ topProvinces, success: true });
+  } catch (error) {
+    console.error('Error fetching top provinces:', error);
+    response.status(500).json({ error: 'Failed to fetch top provinces' });
+  }
+}
+
 module.exports = {
   getPosts,
   getPost,
@@ -273,4 +301,5 @@ module.exports = {
   updatePost,
   deletePost,
   getLatestPost,
+  getTopProvinces,
 };

@@ -1,5 +1,5 @@
 const express = require('express');
-const { verifyToken } = require('../middleware/verifyToken');
+const { verifyToken, verifyAdminToken } = require('../middleware/verifyToken');
 const {
   getUsers,
   getUser,
@@ -12,9 +12,16 @@ const router = express.Router();
 
 //Customer
 router.get('/', getUsers);
-// router.get('/:id', verifyToken, getUser);
+router.get('/:id', verifyToken, getUser);
 router.put('/:id', verifyToken, updateUser);
 router.delete('/:id', verifyToken, deleteUser);
-router.get('/userPosts', verifyToken, userPosts);
+router.get('/posts/userPosts', verifyToken, userPosts);
+
+//Admin
+router.get('/', verifyAdminToken, getUsers);
+router.get('/:id', verifyAdminToken, getUser);
+router.put('/:id', verifyAdminToken, updateUser);
+router.delete('/:id', verifyAdminToken, deleteUser);
+router.get('/:id/posts', verifyAdminToken, userPosts);
 
 module.exports = router;

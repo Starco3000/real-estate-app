@@ -91,6 +91,11 @@ async function addFavorite(request, response) {
       postId,
     });
     await favorite.save();
+
+     // Update user's favorites in UserSchema
+     await Models.User.findByIdAndUpdate(tokenUserId, {
+      $push: { favorites: postId },
+    });
     response
       .status(201)
       .json({ message: 'Post added to favorites!', success: true });
@@ -108,6 +113,10 @@ async function removeFavorite(request, response) {
 
   try {
     await Models.Favorite.findOneAndDelete({ userId, postId });
+     // Update user's favorites in UserSchema
+     await Models.User.findByIdAndUpdate(userId, {
+      $pull: { favorites: postId },
+    });
     response
       .status(200)
       .json({ message: 'Post removed from favorites!', success: true });
@@ -124,3 +133,4 @@ module.exports = {
   addFavorite,
   removeFavorite,
 };
+ 
