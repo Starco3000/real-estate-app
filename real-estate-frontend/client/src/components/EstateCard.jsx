@@ -17,7 +17,6 @@ function EstateCard({ data }) {
       try {
         const response = await apiRequest.get('/favorites');
         const favorites = response.data.favorites;
-        console.log('favorites:', response.data.favorites);
         const isFav = favorites.some(
           (favorite) => favorite.postId._id === data._id,
         );
@@ -36,7 +35,7 @@ function EstateCard({ data }) {
     try {
       if (isFavorite) {
         await apiRequest.delete(`/favorites/${data._id}`);
-        showToast('Bỏ lưu bài viết thành công', 'success');
+        showToast('Bỏ lưu bài viết thành công', 'info');
         setIsFavorite(false);
       } else {
         await apiRequest.post(`/favorites/${data._id}`);
@@ -52,7 +51,7 @@ function EstateCard({ data }) {
     <div className=' w-auto lg:max-w-[280px] h-[315px] bg-white shadow-md rounded-lg overflow-hidden'>
       <Link to={`/${data._id}`}>
         <img
-          src={postDetailId.images[0]}
+          src={postDetailId?.images[0]}
           alt={data.title}
           className='w-full h-[144px]'
         />
@@ -78,8 +77,8 @@ function EstateCard({ data }) {
           </div>
           <div className='flex justify-between items-center mt-3 py-2 border-t-[0.5px] border-gray-200'>
             <div className='flex justify-start items-center gap-3'>
-              <Avatar src={data.userId.avatar} width={35} height={35} />
-              <span>{data.userId.name}</span>
+              <Avatar src={data.userId?.avatar} width={35} height={35} />
+              <span>{data.userI?.name}</span>
             </div>
             <button
               className='h-7 w-7 p-1 border-[1px] border-gray-300 flex items-center rounded'

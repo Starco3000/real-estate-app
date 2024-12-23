@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
 import { Link, useLoaderData } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import Avatar from '../components/Avatar';
 import noavatar from '../assets/noavatar.jpg';
 import SliderInPost from '../components/Slider/SliderInPost';
-import InteractiveMap from '../components/map/GoogleMap';
+import OtherEstate from '../components/OtherEstate';
+import Map from '../components/map/Map';
 import { formatPrice, formatSize, formatDate } from '../components/FormatValue';
 import apiRequest from '../services/apiRequest';
 import { showToast } from '../components/Toast';
-import OtherEstate from '../components/OtherEstate';
 
 const directionMapping = {
   north: 'Hướng Bắc',
@@ -53,7 +53,7 @@ function PostDetailPage() {
     try {
       if (isFavorite) {
         await apiRequest.delete(`/favorites/${postInfo._id}`);
-        showToast('Bỏ lưu bài viết thành công', 'success');
+        showToast('Bỏ lưu bài viết thành công', 'info');
         setIsFavorite(false);
       } else {
         await apiRequest.post(`/favorites/${postInfo._id}`);
@@ -173,7 +173,10 @@ function PostDetailPage() {
           {/* Map */}
           <h2 className='font-medium text-lg mt-10'>Vị trí bất động sản</h2>
           <div className='w-full h-[300px] bg-green-300 mt-4'>
-            {/* <InteractiveMap items={[postInfo]} /> */}
+            <Map
+              isReadOnly={true}
+              initialPosition={[postDetailInfo.coordinate.latitude, postDetailInfo.coordinate.longitude]}
+            />
           </div>
 
           {/* Post Infomation */}
@@ -206,17 +209,17 @@ function PostDetailPage() {
           <div className='md:block grid grid-cols-2 md:grid-cols-1 grid-rows-1'>
             <div className='flex flex-col justify-center items-center row-start-2 '>
               <Avatar
-                src={agentInfo.avatar || noavatar}
+                src={agentInfo?.avatar || noavatar}
                 width={65}
                 height={65}
               />
               <span className='my-3 font-medium text-base text-primary'>
-                {agentInfo.username}
+                {agentInfo?.username}
               </span>
             </div>
             <div className='w-full row-start-2 '>
               <button className='w-full h-12 bg-primary font-medium text-white rounded-md mb-2'>
-                {agentInfo.phone}
+                {agentInfo?.phone}
               </button>
               <button className='w-full h-12 border-[1px] font-medium border-gray-300 rounded-md'>
                 <Link to='/chat'>Chat ngay</Link>
@@ -260,4 +263,4 @@ function PostDetailPage() {
   );
 }
 
-export default PostDetailPage;
+export default memo(PostDetailPage);

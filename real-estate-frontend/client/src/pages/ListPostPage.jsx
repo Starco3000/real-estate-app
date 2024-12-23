@@ -114,7 +114,7 @@
 
 // export default ListPostPage;
 
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
   FaChevronLeft,
   FaChevronRight,
@@ -125,14 +125,16 @@ import PostCardList from '../components/PostCardList';
 import OtherEstate from '../components/OtherEstate';
 import { useLoaderData, Await, useSearchParams } from 'react-router-dom';
 import ListPostSearch from '../components/search/ListPostSearch';
-import useSearchPagramLogic from './../hooks/useSearchPagramLogic';
+import MapWithMarkers from '../components/map/MapWithMarkers';
+import { provinceCoordinates } from '../services/data';
 
 function ListPostPage() {
   const data = useLoaderData();
-  const postResponse = data.postResponse.data;
-  const totalPages = postResponse ? postResponse.totalPages : 1;
+  const totalPages = data ? data.totalPages : 1;
   const [isOpenMap, setIsOpenMap] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [initialPosition, setInitialPosition] = useState([10.7769, 106.7009]); // Default to HCM
+  const topRef = useRef(null);
 
   const currentPage = useMemo(
     () => parseInt(searchParams.get('page') || '1', 10),
@@ -159,101 +161,26 @@ function ListPostPage() {
   );
 
   useEffect(() => {
-    console.log('Search Params:', searchParamsObject);
+    // console.log('Search Params:', searchParamsObject);
     setSearchParams(searchParamsObject);
-  }, [searchParamsObject, setSearchParams]);
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    const province = searchParams.get('province');
+    if (province && provinceCoordinates[province]) {
+      setInitialPosition(provinceCoordinates[province]);
+    } else {
+      setInitialPosition([10.7769, 106.7009]);
+    }
+  }, [searchParamsObject, setSearchParams, searchParams]);
 
   const handlePageChange = (page) => {
     setSearchParams({ ...searchParamsObject, page });
   };
-  // const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  // const status = searchParams.get('status') || '';
-  // const address = searchParams.get('address') || '';
-  // const province = searchParams.get('province') || '';
-  // const district = searchParams.get('district') || '';
-  // const ward = searchParams.get('ward') || '';
-  // const type = searchParams.get('type') || '';
-  // const bedroom = searchParams.get('bedroom') || '';
-  // const direction = searchParams.get('direction') || '';
-  // // const price = searchParams.get('price') || '';
-  // const minSize = searchParams.get('minSize') || '';
-  // const maxSize = searchParams.get('maxSize') || '';
-  // const minPrice = searchParams.get('minPrice') || '';
-  // const maxPrice = searchParams.get('maxPrice') || '';
-  // const priceNegotiable = searchParams.get('priceNegotiable') || '';
-
-  // useEffect(() => {
-  //   console.log('Search Params:', {
-  //     status,
-  //     address,
-  //     province,
-  //     district,
-  //     ward,
-  //     type,
-  //     bedroom,
-  //     direction,
-  //     minSize,
-  //     maxSize,
-  //     minPrice,
-  //     maxPrice,
-  //     page: currentPage,
-  //   });
-  //   setSearchParams({
-  //     status,
-  //     address,
-  //     province,
-  //     district,
-  //     ward,
-  //     type,
-  //     bedroom,
-  //     direction,
-  //     minSize,
-  //     maxSize,
-  //     minPrice,
-  //     maxPrice,
-  //     priceNegotiable,
-  //     page: currentPage,
-  //   });
-  // }, [
-  //   status,
-  //   address,
-  //   province,
-  //   district,
-  //   ward,
-  //   type,
-  //   bedroom,
-  //   direction,
-  //   minSize,
-  //   maxSize,
-  //   minPrice,
-  //   maxPrice,
-  //   priceNegotiable,
-  //   currentPage,
-  //   setSearchParams,
-  // ]);
-
-  // const handlePageChange = (page) => {
-  //   setSearchParams({
-  //     status,
-  //     address,
-  //     province,
-  //     district,
-  //     ward,
-  //     type,
-  //     minSize,
-  //     maxSize,
-  //     minPrice,
-  //     maxPrice,
-  //     priceNegotiable,
-  //     bedroom,
-  //     direction,
-  //     page,
-  //   });
-  // };
-
+  
   const handleSwitchMap = () => {
     setIsOpenMap((prevState) => !prevState);
-    console.log('isOpenMap', isOpenMap);
   };
 
   const handleReset = () => {
@@ -273,17 +200,20 @@ function ListPostPage() {
       className={`w-full pb-2 pt-28 px-3 flex items-center font-lexend font-normal text-sm  ${
         isOpenMap ? 'flex-row gap-x-3 h-[100vh]' : 'flex-col h-auto'
       } `}
+      ref={topRef}
     >
       <div className={`${isOpenMap ? 'w-1/2 h-full overflow-y-scroll' : ''}`}>
         <div className='w-full h-auto px-1 flex justify-center items-center'>
-          <ListPostSearch />
+          <ListPostSearch isOpenMap={isOpenMap} />
         </div>
         <div className='w-full mt-4 flex justify-center items-start gap-x-8'>
           {/* left content */}
           <div className='w-full max-w-[694px] bg-inherit mb-10 flex flex-col gap-y-4'>
             <div className='flex justify-between items-center'>
               <button
-                className={`w-auto h-auto p-3 border border-black rounded-md flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out ${isOpenMap && 'bg-primary text-white'} `}
+                className={`w-auto h-auto p-3 border border-black rounded-md flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out ${
+                  isOpenMap && 'bg-primary text-white'
+                } `}
                 onClick={handleSwitchMap}
               >
                 <FaRegMap /> Bản đồ
@@ -297,13 +227,9 @@ function ListPostPage() {
               </button>
             </div>
             <Suspense fallback={<p>Loading...</p>}>
-              <Await
-                resolve={data.postResponse}
-                errorElement={<p>Error loading posts!</p>}
-              >
-                {(postResponse) => {
-                  const posts = postResponse.data.posts;
-                  console.log('posts', posts);
+              <Await resolve={data} errorElement={<p>Error loading posts!</p>}>
+                {(data) => {
+                  const posts = data.postResponse.posts;
                   return Array.isArray(posts) && posts.length > 0 ? (
                     posts.map((post) => (
                       <PostCardList key={post._id} data={post} />
@@ -356,7 +282,10 @@ function ListPostPage() {
       </div>
       {isOpenMap && (
         <div className='w-1/2 h-full sticky top-0 bottom-0 -right-1/2 bg-green-300'>
-          Map here
+          <MapWithMarkers
+            posts={data.postResponse.posts}
+            initialPosition={initialPosition}
+          />
         </div>
       )}
     </div>

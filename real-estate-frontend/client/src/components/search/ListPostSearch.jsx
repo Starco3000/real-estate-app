@@ -3,7 +3,7 @@ import { FaSearch } from 'react-icons/fa';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SearchFilterListPage } from './SearchFilter';
 
-function ListPostSearch() {
+function ListPostSearch({isOpenMap}) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState({
@@ -67,8 +67,8 @@ function ListPostSearch() {
       </div>
 
       {/* Type of estate options */}
-      <div className='h-14 w-full max-w-[955px]'>
-        <SearchFilterListPage query={query} setQuery={setQuery} />
+      <div className='h-auto w-full max-w-[955px] flex'>
+        <SearchFilterListPage query={query} setQuery={setQuery} isOpenMap={isOpenMap} />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import {
   FaArrowLeft,
+  FaArrowRight,
   FaChevronLeft,
   FaChevronRight,
   FaGear,
@@ -35,6 +36,7 @@ const LocationMarker = HiOutlineLocationMarker;
 const Coin = CiBitcoin;
 const Size = MdOutlinePhotoSizeSelectSmall;
 const ArrowLeft = FaArrowLeft;
+const ArrowRight = FaArrowRight;
 const Reload = FaSyncAlt;
 const Plus = FaPlus;
 const Sale = PiTag;
@@ -62,6 +64,7 @@ export {
   Coin,
   Size,
   ArrowLeft,
+  ArrowRight,
   Reload,
   Plus,
   Sale,

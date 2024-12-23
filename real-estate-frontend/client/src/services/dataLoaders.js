@@ -12,14 +12,22 @@ export const listPostLoader = async ({ request, params }) => {
   const query = url.searchParams.toString();
   const postPromise = apiRequest('/posts?' + query);
   return defer({
-    postResponse: postPromise,
+    postResponse: (await postPromise).data,
+  });
+};
+export const latestPostsLoader = async () => {
+  const response = await apiRequest('/posts/latest-posts');
+  const topPostPromise = await apiRequest('/posts/top-provinces');
+  return defer({
+    latestPosts: response.data.posts,
+    topPosts: topPostPromise.data.topProvinces,
   });
 };
 
-export const latestPostsLoader = async () => {
-  const response = await apiRequest('/posts/latest-posts');
+export const ListNewsLoader = async () => {
+  const newsResponse = await apiRequest('/news');
   return defer({
-    latestPosts: response.data.posts,
+    newsResponse: newsResponse.data,
   });
 };
 
@@ -27,7 +35,7 @@ export const userPostLoader = async ({ request, params }) => {
   try {
     const url = new URL(request.url);
     const query = url.searchParams.toString();
-    const response = await apiRequest('/users/userPosts?' + query);
+    const response = await apiRequest('/users/posts/userPosts?' + query);
     return defer({
       userPosts: response.data,
     })

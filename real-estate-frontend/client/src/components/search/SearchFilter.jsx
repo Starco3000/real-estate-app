@@ -64,9 +64,9 @@ export const SearchFilterHomepage = ({ query, setQuery }) => {
   );
 };
 
-export const SearchFilterListPage = ({ query, setQuery }) => {
+export const SearchFilterListPage = ({ query, setQuery, isOpenMap }) => {
   return (
-    <div className='w-full flex gap-x-4'>
+    <div className={`w-full flex gap-x-4 ${isOpenMap === true ? 'flex-wrap' : 'flex-nowrap'}`}>
       <Selector
         selected={query.price}
         setSelected={(value) => {

@@ -13,6 +13,7 @@ import apiRequest from '../services/apiRequest';
 function UserPostPage() {
   const data = useLoaderData();
   const postResponses = data.posts;
+  console.log('User Post Page:', data);
   const totalPages = postResponses ? postResponses.totalPages : 1;
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState('');

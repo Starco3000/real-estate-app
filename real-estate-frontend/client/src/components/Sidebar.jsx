@@ -19,7 +19,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      await apiRequest.post('/logout');
+      await apiRequest.post('/auth/logout');
       updateUser(null);
       navigate('/login');
     } catch (error) {

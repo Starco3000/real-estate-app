@@ -11,7 +11,6 @@ import apiRequest from '../services/apiRequest';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 function PostCardList({ data }) {
-  console.log('data in PostCardList', data);
   const postDetailId = data.postDetailId;
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -21,7 +20,7 @@ function PostCardList({ data }) {
       try {
         const response = await apiRequest.get('/favorites');
         const favorites = response.data.favorites;
-        console.log('favorites:', response.data.favorites);
+        // console.log('favorites:', response.data.favorites);
         const isFav = favorites.some(
           (favorite) => favorite.postId._id === data._id,
         );

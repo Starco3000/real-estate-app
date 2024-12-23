@@ -16,6 +16,7 @@ import {
   SELECT_FOR_RENT,
   SELECT_FOR_SALE,
 } from '../hooks/useReducer';
+import Map from '../components/map/Map';
 
 function AddPostPage() {
   const { provinces, districts, wards, query, setQuery } = useLocationData();
@@ -90,8 +91,8 @@ function AddPostPage() {
     const newErrors = {};
     if (!formValues.title) newErrors.title = 'Tiêu đề bài viết là bắt buộc';
     if (!formValues.address) newErrors.address = 'Địa chỉ là bắt buộc';
-    if (!formValues.latitude) newErrors.latitude = 'Vĩ độ là bắt buộc';
-    if (!formValues.longitude) newErrors.longitude = 'Tung độ là bắt buộc';
+    // if (!formValues.latitude) newErrors.latitude = 'Vĩ độ là bắt buộc';
+    // if (!formValues.longitude) newErrors.longitude = 'Tung độ là bắt buộc';
     if (images.length < 4) newErrors.images = 'Cần tải lên ít nhất 4 hình ảnh';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -151,8 +152,10 @@ function AddPostPage() {
         description: value || '',
         certificate: selectedCertificate ? selectedCertificate.name : '',
         coordinate: {
-          latitude: parseFloat(inputs.latitude),
-          longitude: parseFloat(inputs.longitude),
+          // latitude: parseFloat(inputs.latitude),
+          // longitude: parseFloat(inputs.longitude),
+          latitude: parseFloat(formValues.latitude),
+          longitude: parseFloat(formValues.longitude),
         },
       },
     };
@@ -251,6 +254,19 @@ function AddPostPage() {
             onChange={handleChange}
             error={errors.address}
           />
+          {/* Map */}
+          <div className='z-0'>
+            <h2 className='font-medium text-base'>Chọn tọa độ bất động sản</h2>
+            <Map
+              onUpdatePosition={(coords) => {
+                setFormValues((prevValues) => ({
+                  ...prevValues,
+                  latitude: coords[0],
+                  longitude: coords[1],
+                }));
+              }}
+            />
+          </div>
         </div>
         {/* Choose type of estate */}
         <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
@@ -386,7 +402,7 @@ function AddPostPage() {
           )}
         </div>
         {/* Coordinate */}
-        <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
+        {/* <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
           <h2 className='font-medium text-base'>Tọa độ bất động sản</h2>
           <div className='grid grid-cols-2 gap-6'>
             <div className='flex flex-col gap-y-1'>
@@ -424,7 +440,7 @@ function AddPostPage() {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
         {/* Submit */}
         <div className='w-full flex justify-end'>
           <button className='w-24 h-12 bg-primary font-medium text-white rounded-md'>

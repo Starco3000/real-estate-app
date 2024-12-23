@@ -17,3 +17,4 @@ export const changeIconReducer = (state, action) => {
       return state;
   }
 };
+
