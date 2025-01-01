@@ -24,7 +24,7 @@ function RequireAuth() {
   if (!currentAdmin) return <Navigate to='/admin/login' />;
   else {
     return (
-      <div className='max-w-[1500px] h-[100vh] flex flex-row'>
+      <div className='max-w-[1500px] h-[100vh] flex flex-row bg-black'>
         <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
         <div className={`w-full h-[100vh-100px] overflow-y-scroll`}>
           <Toast />

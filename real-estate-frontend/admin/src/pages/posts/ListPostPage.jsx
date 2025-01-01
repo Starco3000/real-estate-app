@@ -10,6 +10,7 @@ import {
 import apiRequest from '../../services/apiRequest';
 import { ChevronLeft, ChevronRight, Reload } from '../../components/Icons';
 import { showToast } from '../../components/Toast';
+import SwitchBtn from '../../components/SwitchBtn';
 
 function ListPostPage() {
   const data = useLoaderData();
@@ -17,6 +18,7 @@ function ListPostPage() {
   const totalPages = postResponses ? postResponses.totalPages : 1;
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState('');
+  const [isUpdate, setIsUpdate] = useState(false);
   const navigate = useNavigate();
   const [query, setQuery] = useState({
     status: searchParams.get('status') || '',
@@ -33,6 +35,9 @@ function ListPostPage() {
   );
   const handlePageChange = (page) => {
     setSearchParams({ ...query, page });
+  };
+  const handleSwitchChange = (newState) => {
+    setIsUpdate(newState);
   };
 
   const handleSearch = () => {
@@ -75,7 +80,7 @@ function ListPostPage() {
   };
 
   return (
-    <div className='w-full h-auto pb-4 bg-main font-lexend font-normal text-sm relative '>
+    <div className='w-full h-full pb-4 bg-main font-lexend font-normal text-sm relative '>
       <div className='w-full h-20 bg-white flex items-center px-10'>
         <h1 className='text-2xl font-medium'>Danh sách bài viết</h1>
       </div>
@@ -102,6 +107,10 @@ function ListPostPage() {
           </div>
         </div>
         <div className='w-full h-auto flex justify-between gap-x-5'>
+          <div className='flex items-center gap-2 font-medium text-lg'>
+            <SwitchBtn event={isUpdate} onToggle={handleSwitchChange} />
+            Chỉnh sửa tin tức
+          </div>
           <button
             className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
             onClick={handleReset}
@@ -127,6 +136,7 @@ function ListPostPage() {
                     key={post._id}
                     data={post}
                     handleEvent={handleDelete}
+                    isUpdate={isUpdate}
                   />
                 ))
               ) : (

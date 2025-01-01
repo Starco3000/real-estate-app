@@ -128,7 +128,7 @@ function UpdatePostPage() {
   const handleNumberInput = (e) => {
     const value = e.target.value;
     e.target.value = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-    handleChange(e); 
+    handleChange(e);
   };
 
   const handlePriceChange = (value) => {

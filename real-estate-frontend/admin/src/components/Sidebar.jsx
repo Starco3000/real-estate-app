@@ -28,7 +28,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
   };
   return (
     <div
-      className={`w-auto h-screen font-lexend font-normal text-base bg-primary relative top-0 left-0 `}
+      className={`w-auto h-screen font-lexend font-normal text-base bg-primary relative top-0 left-0 z-50 `}
     >
       {/* Button HandleSidebar */}
       <div className='w-10 h-10 border-[4px] border-white rounded-full overflow-hidden absolute top-9 -right-1 translate-x-[50%] z-50'>

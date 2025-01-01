@@ -278,3 +278,27 @@ export const Bedrooms = [
   { id: 5, name: '5', value: 5 },
   { id: 6, name: '5+', value: "5+" },
 ];
+
+
+export const TypeNews = [
+  {
+    id: 1,
+    name: 'Tin tức',
+    value: 'news',
+  },
+  {
+    id: 2,
+    name: 'Mua BĐS',
+    value: 'sale',
+  },
+  {
+    id: 3,
+    name: 'Thuê BĐS',
+    value: 'rent',
+  },
+  {
+    id: 4,
+    name: 'Quy hoạch pháp lý',
+    value: 'legal-planning',
+  },
+];
