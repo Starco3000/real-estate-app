@@ -1,27 +1,27 @@
 const express = require('express');
-const { verifyToken, verifyAdminToken } = require('../middleware/verifyToken');
+const { verifyUserToken, verifyAdminToken } = require('../middleware/verifyToken');
 const {
   getUsers,
   getUser,
   updateUser,
   deleteUser,
-  userPosts,
+  userPostsForUser,
+  userPostsForAdmin,
 } = require('../controllers/UserController');
 
 const router = express.Router();
 
 //Customer
-router.get('/', getUsers);
-router.get('/:id', verifyToken, getUser);
-router.put('/:id', verifyToken, updateUser);
-router.delete('/:id', verifyToken, deleteUser);
-router.get('/posts/userPosts', verifyToken, userPosts);
+router.get('/:id', verifyUserToken, getUser);
+router.put('/:id', verifyUserToken, updateUser);
+router.delete('/:id', verifyUserToken, deleteUser);
+router.get('/posts/userPosts', verifyUserToken, userPostsForUser);
 
 //Admin
 router.get('/', verifyAdminToken, getUsers);
-router.get('/:id', verifyAdminToken, getUser);
-router.put('/:id', verifyAdminToken, updateUser);
-router.delete('/:id', verifyAdminToken, deleteUser);
-router.get('/:id/posts', verifyAdminToken, userPosts);
+router.get('/user/:id', verifyAdminToken, getUser);
+router.put('/update-user/:id', verifyAdminToken, updateUser);
+router.delete('/user/:id', verifyAdminToken, deleteUser);
+router.get('/user/:id/posts', verifyAdminToken, userPostsForAdmin);
 
 module.exports = router;

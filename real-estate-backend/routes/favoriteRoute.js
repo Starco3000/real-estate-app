@@ -1,5 +1,5 @@
 const express = require('express');
-const { verifyToken } = require('../middleware/verifyToken');
+const { verifyUserToken } = require('../middleware/verifyToken');
 const {
   addFavorite,
   removeFavorite,
@@ -8,8 +8,8 @@ const {
 
 const router = express.Router();
 
-router.get('/', verifyToken, getFavorites);
-router.post('/:id', verifyToken, addFavorite);
-router.delete('/:id', verifyToken, removeFavorite);
+router.get('/', verifyUserToken, getFavorites);
+router.post('/:id', verifyUserToken, addFavorite);
+router.delete('/:id', verifyUserToken, removeFavorite);
 
 module.exports = router;

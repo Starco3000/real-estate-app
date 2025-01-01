@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Models = require('../models/Models');
+const cloudinary = require('../config/cloudinary');
 
 async function getPosts(request, response) {
   try {
@@ -197,27 +198,6 @@ async function updatePost(request, response) {
   }
 }
 
-// async function deletePost(request, response) {
-//   const _id = request.params.id;
-//   const tokenUserId = request.userId;
-//   try {
-//     //Check userId/owner of post
-//     const post = await Models.Post.findById(_id);
-//     if (post.userId.toString() !== tokenUserId) {
-//       return response
-//         .status(403)
-//         .json({ message: 'Not Authorized!', error: true });
-//     }
-//     await Models.Post.findByIdAndDelete(_id);
-//     response.status(200).json({ message: 'Post deleted', success: true });
-//   } catch (error) {
-//     console.log(error);
-//     response
-//       .status(500)
-//       .json({ message: 'Failed to delete post!', error: true });
-//   }
-// }
-
 async function deletePost(request, response) {
   const _id = request.params.id;
   const tokenUserId = request.userId;
@@ -227,7 +207,7 @@ async function deletePost(request, response) {
 
   try {
     // Fetch the post from the database
-    const post = await Models.Post.findById(_id);
+    const post = await Models.Post.findById(_id).populate('postDetailId');
     if (!post) {
       return response
         .status(404)
@@ -242,9 +222,41 @@ async function deletePost(request, response) {
       });
     }
 
+    // Extract public_id from image URL
+    const extractPublicId = (url) => {
+      const parts = url.split('/');
+      const fileName = parts.pop();
+      const versionIndex = parts.findIndex((part) => part.startsWith('v'));
+      const publicId =
+        parts.slice(versionIndex + 1).join('/') + '/' + fileName.split('.')[0];
+      return publicId;
+    };
+
+    //Delete images from cloudinary
+    const images = post.postDetailId.images;
+    console.log('Images:', images);
+    if (images && images.length > 0) {
+      for (const image of images) {
+        const publicId = extractPublicId(image);
+        console.log('public_id:', publicId);
+        await cloudinary.uploader.destroy(publicId, (error, result) => {
+          if (error) {
+            console.log('Error deleting image:', error);
+          } else {
+            console.log('Image deleted:', result);
+          }
+        });
+      }
+    }
+
     // Delete the post
     await Models.Post.findByIdAndDelete(_id);
     await Models.PostDetail.findByIdAndDelete(post.postDetailId);
+    await Models.Favorite.deleteMany({ postId: _id });
+    await Models.User.findByIdAndUpdate(tokenUserId, {
+      $pull: { posts: _id },
+    });
+
     response
       .status(200)
       .json({ message: 'Post deleted successfully!', success: true });

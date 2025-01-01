@@ -174,8 +174,14 @@ const NewsSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
     title: { type: String, required: true },
+    thumbnail: { type: String, required: true },
     description: { type: String, required: true },
-    publisher_name: { type: String, required: true },
+    views: { type: Number, default: 0 },
+    authorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Admin',
+      required: true,
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },

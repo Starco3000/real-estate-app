@@ -1,5 +1,5 @@
 const express = require('express');
-const { verifyToken, verifyAdminToken } = require('../middleware/verifyToken');
+const { verifyUserToken, verifyAdminToken } = require('../middleware/verifyToken');
 const {
   getPosts,
   getPost,
@@ -17,9 +17,9 @@ router.get('/latest-posts', getLatestPost);
 router.get('/top-provinces', getTopProvinces);
 router.get('/', getPosts);
 router.get('/:id', getPost);
-router.post('/', verifyToken, addPost);
-router.put('/:id', verifyToken, updatePost);
-router.delete('/:id', verifyToken, deletePost);
+router.post('/', verifyUserToken, addPost);
+router.put('/:id', verifyUserToken, updatePost);
+router.delete('/:id', verifyUserToken, deletePost);
 
 // Admin routes
 router.get('/', verifyAdminToken, getPosts);

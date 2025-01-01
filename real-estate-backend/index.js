@@ -7,6 +7,7 @@ const testRoute = require('./routes/testRoute.js');
 const userRoute = require('./routes/userRoute.js');
 const favoriteRoute = require('./routes/favoriteRoute.js');
 const newsRoute = require('./routes/newsRoute.js');
+const adminRoute = require('./routes/adminRoute.js');
 const cookiesParser = require('cookie-parser');
 const connectDB = require('./config/connectDB');
 
@@ -33,7 +34,8 @@ app.use(
   }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookiesParser());
 
 const PORT = process.env.PORT || 5000;
@@ -50,8 +52,7 @@ app.use('/api/news', newsRoute);
 app.use('/api/admin/posts', postRoute);
 app.use('/api/admin/users', userRoute);
 app.use('/api/admin/news', newsRoute);
-
-// app.use('/api/admin/posts', postRoute);
+app.use('/api/admin', adminRoute);
 
 connectDB().then(() => {
   app.listen(PORT, () => {

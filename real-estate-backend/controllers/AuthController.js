@@ -90,7 +90,7 @@ async function login(request, response) {
     );
 
     response
-      .cookie('token', token, {
+      .cookie('userToken', token, {
         httpOnly: true,
         // secure: process.env.NODE_ENV === 'production', // Chỉ sử dụng thuộc tính Secure trong môi trường production
         sameSite: 'lax', // Bảo vệ chống lại CSRF
@@ -109,7 +109,7 @@ async function login(request, response) {
 
 async function logout(request, response) {
   response
-    .clearCookie('token')
+    .clearCookie('userToken')
     .status(200)
     .json({ message: 'Logout successful' });
 }
@@ -141,7 +141,7 @@ async function adminLogin(request, response) {
     const { password: _, ...adminWithoutPassword } = admin.toObject();
 
     response
-      .cookie('token', token, {
+      .cookie('adminToken', token, {
         httpOnly: true,
         // secure: process.env.NODE_ENV === 'production', // Chỉ sử dụng thuộc tính Secure trong môi trường production
         sameSite: 'lax', // Bảo vệ chống lại CSRF
@@ -165,9 +165,10 @@ async function adminLogin(request, response) {
 
 async function adminLogout(request, response) {
   response
-    .clearCookie('token')
+    .clearCookie('adminToken')
     .status(200)
     .json({ message: 'Logout successful' });
 }
 
-module.exports = { register, login, logout, adminLogin, adminLogout, active };
+
+module.exports = { register, login, logout, adminLogin, adminLogout, active};
