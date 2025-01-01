@@ -1,5 +1,10 @@
 export function TimeSince({ date }) {
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate)) {
+    return 'Invalid date';
+  }
+
+  const seconds = Math.floor((new Date() - parsedDate) / 1000);
 
   let interval = Math.floor(seconds / 31536000);
   if (interval > 1) {

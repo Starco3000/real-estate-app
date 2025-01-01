@@ -5,8 +5,11 @@ import Images from './Images';
 import { Clock, Coin, LocationMarker, Size } from './Icons';
 import { TimeSince } from '../utils/TimeSinceUtill';
 import { formatPrice, formatSize } from './FormatValue';
+import { showToast } from './Toast';
+import apiRequest from '../services/apiRequest';
 
-function PostCard({ data, handleEvent }) {
+function PostCard({ data }) {
+  console.log('data:', data._id);
   const postDetailId = data.postDetailId;
   const agentInfo = data.userId;
   const navigate = useNavigate();
@@ -16,6 +19,17 @@ function PostCard({ data, handleEvent }) {
     e.preventDefault();
     navigate(`/update-post/${data._id}`);
   };
+
+  const handleDelete = async (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      try {
+        await apiRequest.delete(`/posts/${data._id}`);
+        showToast('Xóa bài viết thành công', 'success');
+      } catch (error) {
+        showToast('Xóa bài viết thất bại', 'error');
+      }
+    };
 
   return (
     <Link to={`/${data._id}`} className='block'>
@@ -80,7 +94,7 @@ function PostCard({ data, handleEvent }) {
           </button>
           <button
             className='h-full bg-red-500 text-white py-1 px-2 rounded-ee-lg hover:bg-red-400'
-            onClick={handleEvent}
+            onClick={handleDelete}
           >
             Xóa
           </button>

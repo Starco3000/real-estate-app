@@ -10,16 +10,14 @@ import ListPostPage from './pages/ListPostPage';
 import AddPostPage from './pages/AddPostPage';
 import {
   favoritePostLoader,
-  latestPostsLoader,
   ListNewsLoader,
-  listPostLoader,
-  postDetailLoader,
   userPostLoader,
 } from './services/dataLoaders';
 import FavoritePostPage from './pages/FavoritePostPage';
 import UpdatePostPage from './pages/UpdatePostPage';
 import UserPostPage from './pages/UserPostPage';
 import ListNewsPage from './pages/ListNewsPage';
+import NewsDetailPage from './pages/NewsDetailPage';
 
 function App() {
   const router = createBrowserRouter([
@@ -30,22 +28,23 @@ function App() {
         {
           path: '/',
           element: <HomePage />,
-          loader: latestPostsLoader,
         },
         {
           path: '/list',
           element: <ListPostPage />,
-          loader: listPostLoader,
         },
         {
           path: '/:id',
           element: <PostDetailPage />,
-          loader: postDetailLoader,
         },
         {
           path: '/news',
           element: <ListNewsPage />,
           loader: ListNewsLoader,
+        },
+        {
+          path: '/news/:id',
+          element: <NewsDetailPage />,
         },
         {
           path: '/login',

@@ -53,7 +53,7 @@ function EstateCard({ data }) {
         <img
           src={postDetailId?.images[0]}
           alt={data.title}
-          className='w-full h-[144px]'
+          className='w-full h-[144px] object-cover'
         />
         <div className='px-4'>
           <div className='w-full h-10'>

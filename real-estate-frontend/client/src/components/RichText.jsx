@@ -11,7 +11,7 @@ function RichText({ value, setValue }) {
       ['bold', 'italic', 'underline', 'strike', 'blockquote'],
       [
         { list: 'ordered' },
-        { list: 'bullet' },
+        // { list: 'bullet' },
         { indent: '-1' },
         { indent: '+1' },
       ],

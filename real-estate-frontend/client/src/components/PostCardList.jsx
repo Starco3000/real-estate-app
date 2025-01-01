@@ -113,7 +113,10 @@ function PostCardList({ data }) {
               <span className='italic opacity-50 flex justify-center items-center gap-x-2'>
                 <CiClock1 /> <TimeSince date={data.createdAt} />
               </span>
-              <button className='h-7 w-7 p-1 border-[1px] border-gray-300 flex items-center rounded'>
+              <button
+                className='h-7 w-7 p-1 border-[1px] border-gray-300 flex items-center rounded'
+                onClick={handleFavorite}
+              >
                 {!isFavorite ? (
                   <IoMdHeartEmpty className='text-xl text-black' />
                 ) : (

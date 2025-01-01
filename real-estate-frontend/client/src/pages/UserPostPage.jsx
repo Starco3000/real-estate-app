@@ -8,12 +8,11 @@ import {
   useNavigate,
   useSearchParams,
 } from 'react-router-dom';
-import apiRequest from '../services/apiRequest';
 
 function UserPostPage() {
   const data = useLoaderData();
   const postResponses = data.posts;
-  console.log('User Post Page:', data);
+  console.log('User Post Page:', data.userPosts.posts);
   const totalPages = postResponses ? postResponses.totalPages : 1;
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState('');
@@ -63,17 +62,6 @@ function UserPostPage() {
     setSearchParams({});
   };
 
-  const handleDelete = async (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    try {
-      await apiRequest.delete(`/posts/${data._id}`);
-      showToast('Xóa bài viết thành công', 'success');
-    } catch (error) {
-      showToast('Xóa bài viết thất bại', 'error');
-    }
-  };
-
   return (
     <div className='w-full h-full p-4 bg-gray-200 border shadow-lg'>
       {/* Search and filter */}
@@ -118,13 +106,7 @@ function UserPostPage() {
             {(postResponse) => {
               const posts = postResponse;
               return Array.isArray(posts) && posts.length > 0 ? (
-                posts.map((post) => (
-                  <PostCard
-                    key={post._id}
-                    data={post}
-                    handleEvent={handleDelete}
-                  />
-                ))
+                posts.map((post) => <PostCard key={post._id} data={post} />)
               ) : (
                 <p>No posts available</p>
               );

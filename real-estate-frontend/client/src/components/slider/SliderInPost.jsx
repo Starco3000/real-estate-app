@@ -30,12 +30,21 @@ function SliderInPost({ images }) {
     <div className='slider-container'>
       <Slider {...settings}>
         {images.map((image, index) => (
-          <div key={index} className='w-full lg:h-[500px]'>
-            <img
-              src={image}
-              alt={`slide-${index}`}
-              className='w-full h-full object-fill rounded-md'
-            />
+          <div key={index} className='w-full lg:h-[500px] relative'>
+            <div className='w-full h-full blur absolute -z-10'>
+              <img
+                src={image}
+                alt={`slide-${index}`}
+                className='w-full h-full object-fill rounded-md '
+              />
+            </div>
+            <div className='w-full h-full bg-transparent absolute'>
+              <img
+                src={image}
+                alt={`slide-${index}`}
+                className='w-full h-full object-scale-down rounded-md '
+              />
+            </div>
           </div>
         ))}
       </Slider>

@@ -16,10 +16,10 @@ export const listPostLoader = async ({ request, params }) => {
   });
 };
 export const latestPostsLoader = async () => {
-  const response = await apiRequest('/posts/latest-posts');
+  const latestPostPromise = await apiRequest('/posts/latest-posts');
   const topPostPromise = await apiRequest('/posts/top-provinces');
   return defer({
-    latestPosts: response.data.posts,
+    latestPosts: latestPostPromise.data.posts,
     topPosts: topPostPromise.data.topProvinces,
   });
 };
@@ -30,6 +30,12 @@ export const ListNewsLoader = async () => {
     newsResponse: newsResponse.data,
   });
 };
+
+export const newsDetailLoader = async ({ request, params }) => {
+  const response = await apiRequest(`/admin/news/single-news/${params.id}`);
+  return response.data;
+}
+
 
 export const userPostLoader = async ({ request, params }) => {
   try {
