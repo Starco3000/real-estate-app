@@ -35,11 +35,11 @@ function AccountListPostPage() {
 
   const navigate = useNavigate();
   const handleBack = () => {
-    navigate(-3);
+    navigate(-4);
   };
 
   return (
-    <div className='font-lexend font-normal text-sm'>
+    <div className='bg-white h-full font-lexend font-normal text-sm'>
       {/* Back button */}
       <div className='w-full h-auto pt-10'>
         <button
@@ -50,7 +50,7 @@ function AccountListPostPage() {
         </button>
       </div>
 
-      <div className='px-10'>
+      <div className='h-auto px-10 bg-white'>
         <div className='w-full h-auto pb-4'>
           <h1 className='text-2xl mb-3 capitalize'>
             Các bài post của người dùng <b>{userInfo?.name}</b>
@@ -73,24 +73,26 @@ function AccountListPostPage() {
           </div>
         </div>
         {/* List Post of User */}
-        <Suspense fallback={<p>Loading...</p>}>
-          <Await resolve={userPosts} errorElement={<p>Error loading posts!</p>}>
-            {(postResponse) => {
-              const posts = postResponse.posts;
-              return Array.isArray(posts) && posts.length > 0 ? (
-                posts.map((post) => (
-                  <PostCard
-                    key={post._id}
-                    data={post}
-                    // handleEvent={handleDelete}
-                  />
-                ))
-              ) : (
-                <p>No posts available</p>
-              );
-            }}
-          </Await>
-        </Suspense>
+        <div className='flex flex-col gap-y-3'>
+          <Suspense fallback={<p>Loading...</p>}>
+            <Await resolve={userPosts} errorElement={<p>Error loading posts!</p>}>
+              {(postResponse) => {
+                const posts = postResponse.posts;
+                return Array.isArray(posts) && posts.length > 0 ? (
+                  posts.map((post) => (
+                    <PostCard
+                      key={post._id}
+                      data={post}
+                      // handleEvent={handleDelete}
+                    />
+                  ))
+                ) : (
+                  <p>No posts available</p>
+                );
+              }}
+            </Await>
+          </Suspense>
+        </div>
 
         {/* Pagination */}
         <div className='w-full h-9 my-4 flex justify-center gap-x-1'>

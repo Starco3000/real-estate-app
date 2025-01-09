@@ -29,7 +29,7 @@ function PostCard({ data, handleEvent, isUpdate }) {
             src={postDetailId.images[0]}
             alt={data.title}
             loading='eager'
-            className='w-[250px] h-full object-cover'
+            className='w-full max-w-[200px] h-full object-cover'
           />
           <div className='w-full flex flex-col justify-between overflow-hidden'>
             <div className='p-4 overflow-hidden'>

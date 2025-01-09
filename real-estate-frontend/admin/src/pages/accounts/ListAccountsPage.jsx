@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Link, useLoaderData, useSearchParams } from 'react-router-dom';
 import apiRequest from '../../services/apiRequest';
 import InputField from '../../components/inputField/InputField';
@@ -6,43 +6,81 @@ import { showToast } from '../../components/Toast';
 import { ChevronLeft, ChevronRight, Reload } from '../../components/Icons';
 
 function ListAccountsPage() {
-  const { accountsResponse } = useLoaderData();
-  const [users, setUsers] = useState(accountsResponse.users);
-  const totalPages = accountsResponse ? accountsResponse.totalPages : 1;
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState(
     searchParams.get('keyword') || '',
   );
 
+  useEffect(() => {
+    async function getUsers() {
+      const response = await apiRequest('/admin/users');
+      setData(response.data);
+    }
+    getUsers();
+  }, []);
+
+  const searchAccount = useCallback(async () => {
+    setLoading(true);
+    const response = await apiRequest(`/admin/users?keyword=${searchInput}`);
+    setData(response.data);
+    setLoading(false);
+  }, [searchInput]);
+
+  const handleReset = async () => {
+    setLoading(true);
+    const response = await apiRequest(`/admin/users`);
+    setData(response.data);
+    setSearchInput('');
+    setLoading(false);
+  };
+
+  const handleToggleUserStatus = useCallback(
+    async (userId, isDisabled) => {
+      setLoading(true);
+      try {
+        const endpoint = isDisabled
+          ? `/admin/users/user/${userId}/enable`
+          : `/admin/users/user/${userId}/disable`;
+        const response = await apiRequest.put(endpoint);
+        const updatedUser = response.data.user;
+        const updatedUsers = data.users.map((user) =>
+          user._id === userId ? updatedUser : user,
+        );
+        setData((prevData) => ({ ...prevData, users: updatedUsers }));
+        showToast('Trạng thái tài khoản cập nhập thành công', 'success');
+      } catch (error) {
+        console.error('Failed to toggle user status', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [data],
+  );
+
+  const totalPages = data?.totalPages;
   const currentPage = useMemo(
     () => parseInt(searchParams.get('page') || '1', 20),
     [searchParams],
   );
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      setSearchParams({ keyword: searchInput, page: 1 });
-    }, 100);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchInput, setSearchParams]);
-
   const handlePageChange = (page) => {
     setSearchParams({ keyword: searchInput, page });
   };
 
-
-  const handleDeactivate = (userId) => {
-    // Implement deactivate logic here
-  };
+  // const handleDeactivate = (userId) => {
+  //   // Implement deactivate logic here
+  // };
 
   const handleDelete = async (accountId) => {
     try {
       await apiRequest.delete(`/admin/users/user/${accountId}`);
+      setData((prevData) => ({
+        ...prevData,
+        users: prevData.users.filter((user) => user._id !== accountId),
+      }));
       showToast('Xóa người dùng thành công', 'success');
-      setUsers((prevUsers) =>
-        prevUsers.filter((user) => user._id !== accountId),
-      );
     } catch (error) {
       showToast('Xóa người dùng thất bại', 'error');
     }
@@ -53,15 +91,15 @@ function ListAccountsPage() {
       <div className='w-full h-20 bg-white flex items-center px-10'>
         <h1 className='text-2xl font-medium'>Danh sách tài khoản người dùng</h1>
       </div>
-      <div className='w-full my-4 px-4 flex justify-between items-center'>
+      <div className='w-full h-auto my-4 px-4 flex justify-between items-center'>
         <button
           className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
-          // onClick={handleReset}
+          onClick={handleReset}
         >
           <Reload />
           Đặt lại tìm kiếm
         </button>
-        <div className='w-[300px]'>
+        <div className='w-[300px] flex flex-row gap-3'>
           <InputField
             type='text'
             id='search'
@@ -70,6 +108,13 @@ function ListAccountsPage() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
+          <button
+            type='button'
+            className='w-auto h-auto p-2.5 bg-primary rounded text-white'
+            onClick={searchAccount}
+          >
+            Seach
+          </button>
         </div>
       </div>
       <table className='w-[97%] mx-4 bg-white border border-gray-500 rounded overflow-hidden'>
@@ -84,7 +129,7 @@ function ListAccountsPage() {
           </tr>
         </thead>
         <tbody>
-          {users.map((account, index) => (
+          {data?.users?.map((account, index) => (
             <tr key={account._id} className='border border-gray-400'>
               <td className='w-12 p-2 border-r border-gray-400 text-center'>
                 {index + 1}
@@ -93,18 +138,21 @@ function ListAccountsPage() {
               <td className='p-2 border-r border-gray-400'>{account.name}</td>
               <td className='p-2 border-r border-gray-400'>{account.phone}</td>
               <td className='p-2 border-r border-gray-400 text-center'>
-                {account.totalPosts}
+                {account?.totalPosts}
               </td>
               <td className='p-2 text-center flex flex-col items-center gap-y-1'>
                 <button
                   className='bg-yellow-500 text-white px-2 py-1 rounded mr-2'
-                  onClick={() => handleDeactivate(account._id)}
+                  onClick={() =>
+                    handleToggleUserStatus(account?._id, account?.isDisabled)
+                  }
+                  // disabled={account?.isDisabled}
                 >
-                  Deactivate
+                  {account?.isDisabled ? 'Enable' : 'Disable'}
                 </button>
                 <button
                   className='bg-red-500 text-white px-2 py-1 rounded'
-                  onClick={() => handleDelete(account._id)}
+                  onClick={() => handleDelete(account?._id)}
                 >
                   Delete
                 </button>

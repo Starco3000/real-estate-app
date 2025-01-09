@@ -40,7 +40,7 @@ function NewsCard({ data, event, setData }) {
         </div>
         <div className='w-full h-1/2 p-4 flex flex-col justify-between'>
           <div>
-            <h1 className='pb-2 text-xl font-medium line-clamp-2'>
+            <h1 className='pb-1 text-xl font-medium line-clamp-2'>
               {data.title}
             </h1>
           </div>

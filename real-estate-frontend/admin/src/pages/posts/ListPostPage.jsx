@@ -52,7 +52,6 @@ function ListPostPage() {
       pageSize: 10, // Add pageSize parameter
     }).toString();
     navigate(`/admin/list?${queryString}`);
-    console.log('Search Query:', query);
   };
 
   const handleReset = () => {
@@ -77,6 +76,10 @@ function ListPostPage() {
     } catch (error) {
       showToast('Xóa bài viết thất bại', 'error');
     }
+  };
+
+  const handleNewPost = () => {
+    navigate('/admin/add-post');
   };
 
   return (
@@ -111,13 +114,15 @@ function ListPostPage() {
             <SwitchBtn event={isUpdate} onToggle={handleSwitchChange} />
             Chỉnh sửa tin tức
           </div>
-          <button
-            className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
-            onClick={handleReset}
-          >
-            <Reload />
-            Đặt lại tìm kiếm
-          </button>
+          <div className='flex flex-row gap-4'>
+            <button
+              className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
+              onClick={handleReset}
+            >
+              <Reload />
+              Đặt lại tìm kiếm
+            </button>
+          </div>
         </div>
       </div>
       {/* Post List*/}

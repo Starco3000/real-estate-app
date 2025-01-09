@@ -15,10 +15,7 @@ import AddNewsPage from './pages/news/AddNewsPage';
 import UpdateNewsPage from './pages/news/UpdateNewsPage';
 import SettingPage from './pages/SettingPage';
 import {
-  listAccountsLoader,
   listPostLoader,
-  newsDetailLoader,
-  newsListLoader,
   postDetailLoader,
   userPostsLoader,
 } from './services/dataLoaders';
@@ -68,7 +65,6 @@ function App() {
         {
           path: 'users',
           element: <ListAccountsPage />,
-          loader: listAccountsLoader,
         },
         {
           path: 'users/user/:id/posts',
@@ -78,12 +74,10 @@ function App() {
         {
           path: 'news',
           element: <ListNewsPage />,
-          // loader: newsListLoader,
         },
         {
           path: 'news/single-news/:id',
           element: <NewsDetailPage />,
-          loader: newsDetailLoader,
         },
         {
           path: 'news/add-news',

@@ -1,10 +1,9 @@
 import React from 'react';
 import Avatar from './Avatar';
 import Images from './Images';
+import 'react-quill-new/dist/quill.snow.css'; // Import Quill's CSS
 
 function NewsPreview({ title, thumbnail, description }) {
-  console.log('Thumbnail:', thumbnail);
-  console.log('Title:', title);
   return (
     <div className='w-full h-auto bg-white p-4 rounded border shadow-lg flex flex-col items-center '>
       <div className='w-[400px] h-auto pb-3 border shadow-md '>
@@ -18,7 +17,7 @@ function NewsPreview({ title, thumbnail, description }) {
         </h3>
         <div className='w-full h-[40px] px-3 text-gray-500 overflow-hidden'>
           <p
-            className='line-clamp-3'
+            className='ql-editor line-clamp-3'
             dangerouslySetInnerHTML={{
               __html: description || 'Mô tả bài viết',
             }}
@@ -54,6 +53,7 @@ function NewsPreview({ title, thumbnail, description }) {
           <div className='w-[800px] h-auto px-3 overflow-y-scroll hide-scrollbar'>
             <article>
               <div
+                className='ql-editor'
                 dangerouslySetInnerHTML={{
                   __html: description || 'Mô tả bài viết',
                 }}

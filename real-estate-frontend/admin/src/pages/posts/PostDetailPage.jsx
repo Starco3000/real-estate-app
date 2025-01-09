@@ -11,6 +11,8 @@ import {
   formatSize,
   formatDate,
 } from '../../components/FormatValue';
+import 'react-quill-new/dist/quill.snow.css';
+
 
 const directionMapping = {
   north: 'Hướng Bắc',
@@ -29,14 +31,13 @@ function PostDetailPage() {
   const postDetailInfo = post.post.postDetailId;
   const agentInfo = post.post.userId;
   const navigate = useNavigate();
-  console.log('postDetailInfo', postDetailInfo);
 
   const handleBack = () => {
     navigate(-1);
   };
 
   return (
-    <div className='w-full h-auto font-lexend font-normal text-sm pt-10'>
+    <div className='w-full h-auto bg-white font-lexend font-normal text-sm pt-10'>
       <button
         onClick={handleBack}
         className=' mb-6 ml-10 text-base flex items-center gap-x-3 '
@@ -51,9 +52,9 @@ function PostDetailPage() {
             <SliderInPost images={postDetailInfo.images} />
           </div>
           {/* Breadcrumb */}
-          <div className='w-full h-[30px] bg-yellow-400 mt-20 md:mt-4'>
+          {/* <div className='w-full h-[30px] bg-yellow-400 mt-20 md:mt-4'>
             breadcrumb
-          </div>
+          </div> */}
           {/* Info Estate */}
           <div className='px-3 md:px-0'>
             <h1 className='font-medium text-lg md:text-2xl line-clamp-2 my-2'>
@@ -95,7 +96,7 @@ function PostDetailPage() {
             {/* Description Estate */}
             <h2 className='font-medium text-lg mt-10'>Thông tin mô tả</h2>
             <p
-              className='mt-4'
+              className='ql-editor mt-4'
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(postDetailInfo.description),
               }}
@@ -184,17 +185,17 @@ function PostDetailPage() {
             <div className='md:block grid grid-cols-2 md:grid-cols-1 grid-rows-1'>
               <div className='flex flex-col justify-center items-center row-start-2 '>
                 <Avatar
-                  src={agentInfo.avatar || Images.noavatar}
+                  src={agentInfo?.avatar || Images.noavatar}
                   width={65}
                   height={65}
                 />
                 <span className='my-3 font-medium text-base text-primary'>
-                  {agentInfo.username}
+                  {agentInfo?.username || 'Người đăng'}
                 </span>
               </div>
               <div className='w-full row-start-2 '>
                 <button className='w-full h-12 bg-primary font-medium text-white rounded-md mb-2'>
-                  {agentInfo.phone}
+                  {agentInfo?.phone || 'Liên hệ'}
                 </button>
                 <button className='w-full h-12 border-[1px] font-medium border-gray-300 rounded-md'>
                   <Link to='/chat'>Chat ngay</Link>

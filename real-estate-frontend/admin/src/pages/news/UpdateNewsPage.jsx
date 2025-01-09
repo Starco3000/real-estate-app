@@ -129,7 +129,7 @@ function UpdateNewsPage() {
   return (
     <div className='w-full h-auto bg-layout font-lexend font-normal text-sm flex flex-col justify-center items-center'>
       {/* Back button */}
-      <div className='w-full h-auto pt-6 bg-green-200'>
+      <div className='w-full h-auto pt-6'>
         <button
           className='mb-6 ml-20 text-lg flex items-center gap-x-3 '
           onClick={handleBack}
@@ -144,7 +144,7 @@ function UpdateNewsPage() {
           onSubmit={handleSubmit}
         >
           <h1 className='w-full pt-7 font-semibold text-2xl text-center capitalize'>
-            Thêm tin tức mới
+            Cập nhập tin tức
           </h1>
           {/* Title and Type of News */}
           <div className='w-full h-auto pt-2 flex gap-x-4'>
@@ -211,20 +211,6 @@ function UpdateNewsPage() {
                 </div>
               ) : (
                 <label className='flex flex-col items-center justify-center cursor-pointer'>
-                  {/* <svg
-                        className='w-16 h-16 text-gray-400'
-                        fill='none'
-                        stroke='currentColor'
-                        viewBox='0 0 24 24'
-                        xmlns='http://www.w3.org/2000/svg'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          strokeWidth='2'
-                          d='M3 15a4 4 0 004 4h10a4 4 0 004-4M7 10l5-5m0 0l5 5m-5-5v12'
-                        ></path>
-                      </svg> */}
                   <UploadCloud className='w-20 h-auto' />
                   <span className='mt-2 text-gray-600'>Tải ảnh lên</span>
                   <input
