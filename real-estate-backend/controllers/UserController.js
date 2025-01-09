@@ -39,11 +39,11 @@ async function getUsers(request, response) {
       }),
     );
 
-    const totalUsers = await Models.User.countDocuments(query);
+    // const totalUsers = await Models.User.countDocuments(query);
 
     response.status(200).json({
       users: usersWithPostCount,
-      totalPages: Math.ceil(totalUsers / limit),
+      totalPages: Math.ceil(users.length / limit),
       currentPage: parseInt(page),
       success: true,
     });
@@ -451,6 +451,49 @@ async function userPostsForAdmin(request, response) {
   }
 }
 
+const disableUser = async (request, response) => {
+  try {
+    const userId = request.params.id;
+    const user = await Models.User.findByIdAndUpdate(
+      userId,
+      { isDisabled: true },
+      { new: true },
+    ).populate('posts');
+    if (!user) {
+      return response.status(404).json({ message: 'User not found' });
+    }
+    const totalPosts = user.posts.length;
+    response.status(200).json({
+      message: 'User disabled successfully',
+      user: { ...user.toObject(), totalPosts },
+    });
+  } catch (error) {
+    response.status(500).json({ message: 'Failed to disable user', error });
+  }
+};
+
+// Enable user account
+const enableUser = async (request, response) => {
+  try {
+    const userId = request.params.id;
+    const user = await Models.User.findByIdAndUpdate(
+      userId,
+      { isDisabled: false },
+      { new: true },
+    ).populate('posts');
+    if (!user) {
+      return response.status(404).json({ message: 'User not found' });
+    }
+    const totalPosts = user.posts.length;
+    response.status(200).json({
+      message: 'User enabled successfully',
+      user: { ...user.toObject(), totalPosts },
+    });
+  } catch (error) {
+    response.status(500).json({ message: 'Failed to enable user', error });
+  }
+};
+
 module.exports = {
   getUsers,
   getUser,
@@ -459,4 +502,6 @@ module.exports = {
   // userPosts,
   userPostsForUser,
   userPostsForAdmin,
+  disableUser,
+  enableUser,
 };

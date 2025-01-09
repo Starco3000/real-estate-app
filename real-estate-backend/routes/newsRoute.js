@@ -12,10 +12,15 @@ const {
 
 const router = express.Router();
 
-
 //Admin
 router.get('/all-news', verifyAdminToken, getNews);
 router.get('/single-news/:id', verifyAdminToken, getSingleNews);
+router.get('/single-news/:id/latest-news', verifyAdminToken, getLatestNews);
+router.get(
+  '/single-news/:id/most-viewed-news',
+  verifyAdminToken,
+  getMostViewedNews,
+);
 router.post('/add-news', verifyAdminToken, addNews);
 router.put('/update-news/:id', verifyAdminToken, updateNews);
 router.delete('/delete-news/:id', verifyAdminToken, deleteNews);

@@ -9,14 +9,6 @@ const CoordinateSchema = new mongoose.Schema(
   { _id: false, versionKey: false },
 );
 
-// const LocationSchema = new mongoose.Schema(
-//   {
-//     name: { type: String, required: true },
-//     code: { type: Number, required: true },
-//   },
-//   { _id: false, versionKey: false },
-// );
-
 const PostSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
@@ -144,10 +136,11 @@ const UserSchema = new mongoose.Schema(
     phone: { type: String },
     role: {
       type: [String],
-      enum: ['buyer', 'agent', 'admin'],
+      enum: ['buyer', 'agent'],
       default: ['buyer'],
     },
     active: { type: Number, default: 0 },
+    isDisabled: { type: Boolean, default: false },
     token: { type: String },
     avatar: { type: String, default: null },
     createdAt: { type: Date, default: Date.now },
