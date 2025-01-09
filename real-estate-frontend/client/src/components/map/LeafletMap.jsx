@@ -1,6 +1,5 @@
-import React, {useEffect, memo } from 'react';
+import React, { useEffect, memo } from 'react';
 import { MapContainer, TileLayer, Popup, Marker, useMap } from 'react-leaflet';
-
 
 function LeafletMap({ position, updateMapCenter, isReadOnly }) {
   // Component để điều khiển map (flyTo)
@@ -23,8 +22,8 @@ function LeafletMap({ position, updateMapCenter, isReadOnly }) {
 
     return (
       <Marker
-        draggable={!isReadOnly}
         position={position}
+        draggable={!isReadOnly}
         eventHandlers={{
           dragend: onDragEnd,
         }}

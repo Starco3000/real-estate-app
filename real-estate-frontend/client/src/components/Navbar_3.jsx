@@ -10,17 +10,27 @@ import {
   MenusRightIsUser,
   MenusRightNotUser,
 } from '../services/data';
+import { showToast } from './Toast';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { updateUser, currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
   const menus = MenusRightIsUser(currentUser);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleAddPostClick = (e) => {
+    if (currentUser.user.isDisabled  === true) {
+      e.preventDefault(); // Prevent the default link behavior
+      showToast('Tài khoản của bạn đã bị vô hiệu hóa', 'error'); // Show notification
+    } else {
+      navigate('/add-post'); // Navigate to the add post page
+    }
+  };
   const handleLogout = async () => {
     try {
       await apiRequest.post('/auth/logout');
@@ -117,7 +127,9 @@ function Navbar() {
                 </div>
                 {/* button new post */}
                 <div className='w-auto h-10 text-sm flex justify-center items-center p-4 border-2 border-gray-200 rounded-md hover:bg-gray-50'>
-                  <Link to='/add-post'>Đăng tin</Link>
+                  <Link to='/add-post' onClick={handleAddPostClick}>
+                    Đăng tin
+                  </Link>
                 </div>
               </div>
             ) : (
@@ -192,7 +204,9 @@ function Navbar() {
             {/* button new post */}
             {currentUser && (
               <div className='flex justify-center items-center p-4 mb-3 border-2 border-gray-200 rounded '>
-                <Link to='/add-post'>Đăng tin</Link>
+                <Link to='/add-post' onClick={handleAddPostClick}>
+                  Đăng tin
+                </Link>
               </div>
             )}
             {/* button logout */}

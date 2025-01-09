@@ -1,16 +1,20 @@
 import React, { useCallback, useState, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import LeafletMap from './LeafletMap';
+import { useEffect } from 'react';
 
-function Map({
-  onUpdatePosition,
-  isReadOnly = false,
-  initialPosition = [10.7769, 106.7009],
-}) {
-  const [position, setPosition] = useState(initialPosition); // Tọa độ mặc định
+function Map({ onUpdatePosition, isReadOnly = false, initialPosition }) {
+  const [position, setPosition] = useState(
+    initialPosition || [10.7769, 106.7009],
+  ); // Tọa độ mặc định
   const searchQuery = useRef(null); // Lưu trữ từ khóa tìm kiếm
   const [isSearching, setIsSearching] = useState(false);
 
+  useEffect(() => {
+    if (initialPosition) {
+      setPosition(initialPosition);
+    }
+  }, [initialPosition]);
 
   const updateMapCenter = (lat, lng) => {
     setPosition([lat, lng]);

@@ -8,9 +8,10 @@ import PriceInput from '../components/inputField/PriceInput';
 import Selector from '../components/Selector';
 import InputField from '../components/inputField/InputField';
 import RichText from '../components/RichText';
+import Map from '../components/map/Map';
 import { uploadFiles } from '../helpers/uploadFile';
 import { Types, Directions, Certificates } from '../services/data';
-import { Rent, RentFill, Sale, SaleFill, Times } from '../components/Icons';
+import { ArrowLeft, Rent, RentFill, Sale, SaleFill, Times } from '../components/Icons';
 import { showToast } from '../components/Toast';
 import {
   changeIconReducer,
@@ -45,8 +46,8 @@ function UpdatePostPage() {
     address: '',
     bedroom: '',
     bathroom: '',
-    latitude: '',
-    longitude: '',
+    latitude: 0,
+    longitude: 0,
     price: { amount: '', unit: 'triệu', convertedValue: '' },
     size: { amount: '', unit: 'm²', convertedValue: '' },
   });
@@ -58,6 +59,7 @@ function UpdatePostPage() {
     const fetchPostData = async () => {
       try {
         const data = await postDetailLoader({ params: { id } });
+        console.log('data:', data);
         const postDetailId = data.post.postDetailId;
         const price = data.post.price;
         const priceDetails =
@@ -77,8 +79,8 @@ function UpdatePostPage() {
           address: data.post.address,
           bedroom: data?.post?.bedroom,
           bathroom: data?.post?.bathroom,
-          latitude: postDetailId.coordinate.latitude,
-          longitude: postDetailId.coordinate.longitude,
+          latitude: postDetailId?.coordinate?.latitude,
+          longitude: postDetailId?.coordinate?.longitude,
           price: priceDetails,
           size: {
             amount: data.post.size,
@@ -126,7 +128,7 @@ function UpdatePostPage() {
   const handleNumberInput = (e) => {
     const value = e.target.value;
     e.target.value = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-    handleChange(e); 
+    handleChange(e);
   };
 
   const handlePriceChange = (value) => {
@@ -164,8 +166,6 @@ function UpdatePostPage() {
     const newErrors = {};
     if (!formValues.title) newErrors.title = 'Tiêu đề bài viết là bắt buộc';
     if (!formValues.address) newErrors.address = 'Địa chỉ là bắt buộc';
-    if (!formValues.latitude) newErrors.latitude = 'Vĩ độ là bắt buộc';
-    if (!formValues.longitude) newErrors.longitude = 'Tung độ là bắt buộc';
     if (!query.province) newErrors.province = 'Tỉnh/thành phố là bắt buộc';
     if (!query.district) newErrors.district = 'Quận/huyện là bắt buộc';
     if (!query.ward) newErrors.ward = 'Phường/xã là bắt buộc';
@@ -230,8 +230,8 @@ function UpdatePostPage() {
         description: value || '',
         certificate: selectedCertificate ? selectedCertificate.name : '',
         coordinate: {
-          latitude: parseFloat(inputs.latitude),
-          longitude: parseFloat(inputs.longitude),
+          latitude: parseFloat(formValues.latitude),
+          longitude: parseFloat(formValues.longitude),
         },
       },
     };
@@ -239,17 +239,30 @@ function UpdatePostPage() {
     try {
       const request = await apiRequest.put(`/posts/${id}`, datas);
       navigate('/' + request.data.updatedPost._id);
-      showToast('success', 'Cập nhật tin đăng thành công');
+      showToast('Cập nhật tin đăng thành công', 'success');
     } catch (error) {
       console.error('Error creating post:', error);
-      showToast('error', 'Cập nhật tin đăng thất bại');
+      showToast('Cập nhật tin đăng thất bại', 'error');
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  }
+
   return (
     <div className='bg-layout w-full h-auto p-5 font-lexend font-normal text-sm'>
+      {/* Back button */}
+      <div className='w-full h-auto pt-6'>
+        <button
+          className='ml-20 text-lg flex items-center gap-x-3 '
+          onClick={handleBack}
+        >
+          <ArrowLeft /> Back
+        </button>
+      </div>
       <form
-        className='my-20 max-w-[832px] mx-auto flex flex-col gap-y-5'
+        className='mb-20 max-w-[832px] mx-auto flex flex-col gap-y-5'
         onSubmit={handleSubmit}
       >
         <h1 className='font-semibold text-2xl pt-6'>Chỉnh sửa tin đăng</h1>
@@ -350,6 +363,20 @@ function UpdatePostPage() {
             onChange={handleChange}
             error={errors.address}
           />
+          {/* Map */}
+          <div className='z-0'>
+            <h2 className='font-medium text-base'>Chọn tọa độ bất động sản</h2>
+            <Map
+              initialPosition={[formValues.latitude, formValues.longitude]}
+              onUpdatePosition={(coords) => {
+                setFormValues((prevValues) => ({
+                  ...prevValues,
+                  latitude: coords[0],
+                  longitude: coords[1],
+                }));
+              }}
+            />
+          </div>
         </div>
         {/* Choose type of estate */}
         <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
@@ -393,6 +420,7 @@ function UpdatePostPage() {
                   type={'text'}
                   id={'bedroom'}
                   name={'bedroom'}
+                  value={formValues.bedroom}
                   placeholder={'Số phòng ngủ'}
                   onInput={handleNumberInput}
                 />
@@ -408,6 +436,7 @@ function UpdatePostPage() {
                   type={'text'}
                   id={'bathroom'}
                   name={'bathroom'}
+                  value={formValues.bathroom}
                   placeholder={'Số phòng tắm'}
                   onInput={handleNumberInput}
                 />
@@ -493,46 +522,6 @@ function UpdatePostPage() {
           {errors.images && (
             <i className='font-light text-red-400 mt-2'>* {errors.images}</i>
           )}
-        </div>
-        {/* Coordinate */}
-        <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
-          <h2 className='font-medium text-base'>Tọa độ bất động sản</h2>
-          <div className='grid grid-cols-2 gap-6'>
-            <div className='flex flex-col gap-y-1'>
-              <label htmlFor='latitude'>Vĩ độ</label>
-              <InputField
-                type={'text'}
-                id={'latitude'}
-                name={'latitude'}
-                placeholder={'Nhập vĩ độ'}
-                value={formValues.latitude}
-                onChange={handleChange}
-                error={errors.latitude}
-              />
-              {errors.latitude && (
-                <i className='font-light text-red-400 mt-2'>
-                  * {errors.latitude}
-                </i>
-              )}
-            </div>
-            <div className='flex flex-col gap-y-1'>
-              <label htmlFor='longitude'>Tung độ</label>
-              <InputField
-                type={'text'}
-                id={'longitude'}
-                name={'longitude'}
-                placeholder={'Nhập tung độ'}
-                value={formValues.longitude}
-                onChange={handleChange}
-                error={errors.longitude}
-              />
-              {errors.longitude && (
-                <i className='font-light text-red-400 mt-2'>
-                  * {errors.longitude}
-                </i>
-              )}
-            </div>
-          </div>
         </div>
         {/* Submit */}
         <div className='w-full flex justify-end'>

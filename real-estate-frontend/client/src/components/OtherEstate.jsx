@@ -1,49 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchWards } from '../services/apiService';
 
-function OtherEstate() {
+function OtherEstate({ district, status }) {
+  // console.log('district:', district);
+  const [wards, setWards] = useState([]);
+  const [isStatus, setIsStatus] = useState();
+
+  useEffect(() => {
+    if (!district || !Array.isArray(district) || district.length < 2) return;
+
+    switch (status) {
+      case 'buy':
+        setIsStatus('mua');
+        break;
+      case 'rent':
+        setIsStatus('thuê');
+        break;
+      default:
+        setIsStatus('mua');
+    }
+  }, [status, district]);
+
+  useEffect(() => {
+    async function getWards() {
+      if (!district || !Array.isArray(district) || district.length < 2) return;
+      try {
+        const response = await fetchWards(district[0]);
+        setWards(response.wards);
+        console.log('wards:', response.wards);
+      } catch (error) {
+        console.error('Error fetching wards:', error);
+      }
+    }
+    getWards();
+  }, [district]);
   return (
     <div className='px-5 py-4 border-[1px] border-gray-300 rounded-md flex flex-col justify-center items-start shadow-sm '>
       <span className='font-semibold text-primary text-base'>
         Bất động sản liên quan
       </span>
       <ul>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
-        <li className='mt-4 hover:opacity-60'>
-          <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-        </li>
+        {wards.map((ward) => (
+          <li key={ward.code} className='mt-4 hover:opacity-60'>
+            <Link
+              to={`/list?status=${status}&district=${district[1]}&ward=${ward.name}`}
+            >{`${isStatus} ${ward.name} Quận ${district[1]}`}</Link>
+          </li>
+        ))}
       </ul>
     </div>
   );

@@ -66,34 +66,34 @@ function UserPostPage() {
     <div className='w-full h-full p-4 bg-gray-200 border shadow-lg'>
       {/* Search and filter */}
       <div className='w-full h-auto p-4 flex flex-col gap-3 bg-white sticky top-0 right-auto left-auto z-10'>
-        <div className='flex justify-between gap-3'>
+        <div className='flex flex-wrap justify-between gap-3 '>
           <div className='w-auto flex flex-1'>
             <Filter query={query} setQuery={setQuery} />
           </div>
-          <div className='w-auto flex gap-2'>
-            <input
-              type='text'
-              name='search'
-              className='w-[180px] h-10 px-2 outline-none border border-black'
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
+          <div className='w-full h-auto flex justify-between gap-x-5'>
             <button
-              className='w-16 h-10 bg-primary text-white py-1 px-2 rounded'
-              onClick={handleSearch}
+              className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
+              onClick={handleReset}
             >
-              Search
+              <Reload />
+              Đặt lại tìm kiếm
             </button>
+            <div className='w-auto flex gap-2'>
+              <input
+                type='text'
+                name='search'
+                className='w-[180px] h-10 px-2 outline-none border border-black'
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+              <button
+                className='w-16 h-10 bg-primary text-white py-1 px-2 rounded'
+                onClick={handleSearch}
+              >
+                Search
+              </button>
+            </div>
           </div>
-        </div>
-        <div className='w-full h-auto flex justify-between gap-x-5'>
-          <button
-            className='w-auto h-auto p-3 border border-black rounded-md bg-transparent flex items-center gap-x-2 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'
-            onClick={handleReset}
-          >
-            <Reload />
-            Đặt lại tìm kiếm
-          </button>
         </div>
       </div>
       {/* Posts List*/}

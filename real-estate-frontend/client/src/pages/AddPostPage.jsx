@@ -1,4 +1,5 @@
-import { useReducer, useRef, useState } from 'react';
+import { useReducer, useRef, useState, useContext, useEffect } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import apiRequest from './../services/apiRequest';
 import useLocationData from '../hooks/useLocationData';
@@ -23,6 +24,7 @@ function AddPostPage() {
   const [selectedType, setSelectedType] = useState(null);
   const [selectedDirection, setSelectedDirection] = useState(null);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const { currentUser } = useContext(AuthContext);
   const [value, setValue] = useState('');
   const [errors, setErrors] = useState({});
   const [images, setImages] = useState([]);
@@ -43,6 +45,14 @@ function AddPostPage() {
 
   const uploadPhotoRef = useRef();
   const navigate = useNavigate();
+  console.log('currentUser:', currentUser);
+
+  useEffect(() => {
+    if (currentUser.user.isDisabled === true) {
+      showToast('Tài khoản của bạn đã bị vô hiệu hóa', 'error');
+      navigate('/'); // Redirect to home page or any other page
+    }
+  }, [currentUser, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,8 +101,6 @@ function AddPostPage() {
     const newErrors = {};
     if (!formValues.title) newErrors.title = 'Tiêu đề bài viết là bắt buộc';
     if (!formValues.address) newErrors.address = 'Địa chỉ là bắt buộc';
-    // if (!formValues.latitude) newErrors.latitude = 'Vĩ độ là bắt buộc';
-    // if (!formValues.longitude) newErrors.longitude = 'Tung độ là bắt buộc';
     if (images.length < 4) newErrors.images = 'Cần tải lên ít nhất 4 hình ảnh';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -152,8 +160,6 @@ function AddPostPage() {
         description: value || '',
         certificate: selectedCertificate ? selectedCertificate.name : '',
         coordinate: {
-          // latitude: parseFloat(inputs.latitude),
-          // longitude: parseFloat(inputs.longitude),
           latitude: parseFloat(formValues.latitude),
           longitude: parseFloat(formValues.longitude),
         },
@@ -172,7 +178,7 @@ function AddPostPage() {
   return (
     <div className='bg-layout w-full h-auto p-5 font-lexend font-normal text-sm'>
       <form
-        className='my-20 max-w-[832px] mx-auto flex flex-col gap-y-5'
+        className='mb-20 max-w-[832px] mx-auto flex flex-col gap-y-5'
         onSubmit={handleSubmit}
       >
         <h1 className='font-semibold text-2xl pt-6'>Tạo tin đăng mới</h1>
@@ -401,46 +407,6 @@ function AddPostPage() {
             <i className='font-light text-red-400 mt-2'>* {errors.images}</i>
           )}
         </div>
-        {/* Coordinate */}
-        {/* <div className='w-full h-auto bg-white flex flex-col gap-y-3 p-5 shadow-md'>
-          <h2 className='font-medium text-base'>Tọa độ bất động sản</h2>
-          <div className='grid grid-cols-2 gap-6'>
-            <div className='flex flex-col gap-y-1'>
-              <label htmlFor='latitude'>Vĩ độ</label>
-              <InputField
-                type={'text'}
-                id={'latitude'}
-                name={'latitude'}
-                placeholder={'Nhập vĩ độ'}
-                value={formValues.latitude}
-                onChange={handleChange}
-                error={errors.latitude}
-              />
-              {errors.latitude && (
-                <i className='font-light text-red-400 mt-2'>
-                  * {errors.latitude}
-                </i>
-              )}
-            </div>
-            <div className='flex flex-col gap-y-1'>
-              <label htmlFor='longitude'>Tung độ</label>
-              <InputField
-                type={'text'}
-                id={'longitude'}
-                name={'longitude'}
-                placeholder={'Nhập tung độ'}
-                value={formValues.longitude}
-                onChange={handleChange}
-                error={errors.longitude}
-              />
-              {errors.longitude && (
-                <i className='font-light text-red-400 mt-2'>
-                  * {errors.longitude}
-                </i>
-              )}
-            </div>
-          </div>
-        </div> */}
         {/* Submit */}
         <div className='w-full flex justify-end'>
           <button className='w-24 h-12 bg-primary font-medium text-white rounded-md'>
