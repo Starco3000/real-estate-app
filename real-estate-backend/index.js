@@ -14,7 +14,7 @@ const connectDB = require('./config/connectDB');
 const app = express();
 
 const allowedOrigins = [
-  process.env.CLIENT_FRONTEND_URL || "https://kimdienhomes.onrender.com",
+  "https://kimdienhomes.onrender.com",
   process.env.ADMIN_FRONTEND_URL,
 ];
 
