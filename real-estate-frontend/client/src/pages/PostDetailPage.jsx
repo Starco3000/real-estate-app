@@ -6,7 +6,7 @@ import { showToast } from '../components/Toast';
 import DOMPurify from 'dompurify';
 import Avatar from '../components/Avatar';
 import noavatar from '../assets/noavatar.jpg';
-import SliderInPost from '../components/Slider/SliderInPost';
+import SliderInPost from '../components/slider/SliderInPost';
 import OtherEstate from '../components/OtherEstate';
 import Map from '../components/map/Map';
 import LoaderSpinner from '../components/LoaderSpinner';
