@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
@@ -16,7 +16,9 @@ import {
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const { updateAdmin } = useContext(AuthContext);
+  const [selected, setSelected] = useState('/admin/dashboard');
   const navigate = useNavigate();
+
   const handleLogout = async () => {
     try {
       await apiRequest.post('/auth/admin/logout');
@@ -25,6 +27,10 @@ function Sidebar({ isOpen, toggleSidebar }) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSelect = (path) => {
+    setSelected(path);
   };
   return (
     <div
@@ -45,7 +51,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
       </div>
       <div
         className={`h-full flex flex-col justify-between items-start ${
-          isOpen ? 'translate-x-0 w-[250px]' : 'w-[105px]'
+          isOpen ? 'translate-x-0 w-[265px]' : 'w-[105px]'
         } transition-all duration-500 ease-in-out overflow-hidden`}
       >
         {/* Logo Estate App */}
@@ -72,64 +78,81 @@ function Sidebar({ isOpen, toggleSidebar }) {
         </div>
 
         {/* Sidebar Menu */}
-        <div className='w-full px-4 flex flex-col gap-y-4'>
+        <div className='w-full pl-4 pr-5 flex flex-col gap-y-4'>
           <Link to='/admin/dashboard' data-tooltip-id='dashboard'>
-            {!isOpen && (
-              <ReactTooltip id='dashboard' place='right' content='Dashboard' />
-            )}
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/admin/dashboard' ? 'bg-secondary text-white' : ''
+              }`}
+              onClick={() => handleSelect('/admin/dashboard')}
+            >
               <div className='w-8 ml-[14px]'>
                 <Dashboard className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 }`}
               >
-                Dashboard
+                Tổng quan
               </span>
             </div>
           </Link>
 
           <Link to='/admin/list' data-tooltip-id='posts'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/admin/list' ? 'bg-secondary text-white' : ''
+              }`}
+              onClick={() => handleSelect('/admin/list')}
+            >
               <div className='w-8 ml-[14px]'>
                 <RealEstate className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 } whitespace-nowrap`}
               >
-                Post Properties
+                Quản lý các bài tin
               </span>
             </div>
           </Link>
           <Link to='/admin/users' data-tooltip-id='users'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/admin/users' ? 'bg-secondary text-white' : ''
+              }`}
+              onClick={() => handleSelect('/admin/users')}
+            >
               <div className='w-8 ml-[14px]'>
                 <User className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 } whitespace-nowrap`}
               >
-                User Accounts
+                Quản lý người dùng
               </span>
             </div>
           </Link>
           <Link to='/admin/news' data-tooltip-id='news'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/admin/news' ? 'bg-secondary text-white' : ''
+              }`}
+              onClick={() => handleSelect('/admin/news')}
+            >
               <div className='w-8 ml-[14px]'>
                 <News className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 }`}
               >
-                News
+                Quản lý tin tức
               </span>
             </div>
           </Link>
@@ -141,19 +164,24 @@ function Sidebar({ isOpen, toggleSidebar }) {
           </Link> */}
         </div>
         {/* setting */}
-        <div className='w-full px-4 mb-6'>
+        <div className='w-full pl-4 pr-5 mb-6'>
           <div className='w-full h-[1px] px-4 mb-2 bg-gray-400' />
           <Link to='/admin/setting' data-tooltip-id='setting'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/admin/setting' ? 'bg-secondary text-white' : ''
+              }`}
+              onClick={() => handleSelect('/admin/setting')}
+            >
               <div className='w-8 ml-[14px]'>
                 <Setting className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 }`}
               >
-                Setting
+                Cài đặt tài khoản
               </span>
             </div>
           </Link>
@@ -167,30 +195,30 @@ function Sidebar({ isOpen, toggleSidebar }) {
                 <Logout className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 }`}
               >
-                Logout
+                Đăng xuất
               </span>
             </div>
           </div>
         </div>
         {/* Tooltip */}
         {!isOpen && (
-          <ReactTooltip id='dashboard' place='right' content='Dashboard' />
+          <ReactTooltip id='dashboard' place='right' content='Tổng quan' />
         )}
         {!isOpen && (
-          <ReactTooltip id='posts' place='right' content='Post Properties' />
+          <ReactTooltip id='posts' place='right' content='Quản lý các bài tin' />
         )}
         {!isOpen && (
-          <ReactTooltip id='users' place='right' content='User Accounts' />
+          <ReactTooltip id='users' place='right' content='Quản lý người dùng' />
         )}
-        {!isOpen && <ReactTooltip id='news' place='right' content='News' />}
+        {!isOpen && <ReactTooltip id='news' place='right' content='Quản lý tin tức' />}
         {!isOpen && (
-          <ReactTooltip id='setting' place='right' content='Setting' />
+          <ReactTooltip id='setting' place='right' content='Cài đặt tài khoản' />
         )}
-        {!isOpen && <ReactTooltip id='logout' place='right' content='Logout' />}
+        {!isOpen && <ReactTooltip id='logout' place='right' content='Đăng xuất' />}
       </div>
     </div>
   );

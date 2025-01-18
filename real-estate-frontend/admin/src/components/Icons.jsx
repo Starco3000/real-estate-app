@@ -5,7 +5,7 @@ import {
   FaGear,
   FaPlus,
 } from 'react-icons/fa6';
-import { FaSyncAlt, FaUser, FaTimes } from 'react-icons/fa';
+import { FaSyncAlt, FaUser, FaTimes, FaSearch  } from 'react-icons/fa';
 import { AiFillDashboard } from 'react-icons/ai';
 import {
   MdRealEstateAgent,
@@ -18,9 +18,7 @@ import {
 import { CiHeart, CiClock1, CiBitcoin } from 'react-icons/ci';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { PiTag, PiTagFill } from 'react-icons/pi';
-import { IoCloudUploadOutline } from "react-icons/io5";
-
-
+import { IoCloudUploadOutline, IoEye, IoEyeOff } from 'react-icons/io5';
 
 const ChevronLeft = FaChevronLeft;
 const ChevronRight = FaChevronRight;
@@ -44,6 +42,9 @@ const Rent = MdOutlineBedroomParent;
 const RentFill = MdBedroomParent;
 const Times = FaTimes;
 const UploadCloud = IoCloudUploadOutline;
+const EyeOff = IoEyeOff;
+const Eye = IoEye;
+const Search = FaSearch;
 
 export {
   ChevronLeft,
@@ -67,5 +68,8 @@ export {
   Rent,
   RentFill,
   Times,
-  UploadCloud
+  UploadCloud,
+  EyeOff,
+  Eye,
+  Search,
 };

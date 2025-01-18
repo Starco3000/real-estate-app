@@ -1,42 +1,79 @@
-import React, { Suspense, useEffect, useMemo, useState } from 'react';
-import { Await, useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
-import PostCard from '../../components/PostCard';
-import { ArrowLeft, ChevronLeft, ChevronRight } from '../../components/Icons';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
+import apiRequest from '../../services/apiRequest';
 import InputField from '../../components/inputField/InputField';
+import PostCard from '../../components/PostCard';
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+} from '../../components/Icons';
 
 function AccountListPostPage() {
-  const { userPosts, userPromise } = useLoaderData();
-  const userInfo = userPromise.user;
-  // console.log('User Posts:', userPosts);
-  // console.log('User data:', userPromise.user.name);
-
-  const totalPages = userPosts ? userPosts.totalPages : 1;
+  const { id } = useParams();
+  const [userPosts, setUserPosts] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState(
     searchParams.get('keyword') || '',
   );
+  const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-3);
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const postsResponse = await apiRequest(`/admin/users/user/${id}/posts`);
+        setUserPosts(postsResponse.data);
+        const userResponse = await apiRequest(`/admin/users/user/${id}`);
+        setUserInfo(userResponse.data);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, [id]);
 
   const currentPage = useMemo(
     () => parseInt(searchParams.get('page') || '1', 20),
     [searchParams],
   );
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      setSearchParams({ keyword: searchInput, page: 1 });
-    }, 100);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchInput, setSearchParams]);
-
   const handlePageChange = (page) => {
     setSearchParams({ keyword: searchInput, page });
   };
 
-  const navigate = useNavigate();
-  const handleBack = () => {
-    navigate(-4);
-  };
+  useEffect(() => {
+    setSearchInput(searchParams.get('keyword') || '');
+  }, [searchParams]);
+
+  const searchUserPost = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiRequest(
+        `/admin/users/user/${id}/posts?${searchParams.toString()}`,
+      );
+      setUserPosts(response.data);
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  }, [searchParams, id]);
+
+  useEffect(() => {
+    searchUserPost();
+  }, [searchParams, searchUserPost]);
+
+  const totalPages = userPosts ? userPosts.totalPages : 1;
 
   return (
     <div className='bg-white h-full font-lexend font-normal text-sm'>
@@ -69,29 +106,37 @@ function AccountListPostPage() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
+              <button
+                className='w-10 h-10 bg-primary flex justify-center items-center text-white rounded'
+                onClick={() =>
+                  setSearchParams({ keyword: searchInput, page: 1 })
+                }
+              >
+                <Search />
+              </button>
             </div>
           </div>
         </div>
         {/* List Post of User */}
         <div className='flex flex-col gap-y-3'>
-          <Suspense fallback={<p>Loading...</p>}>
-            <Await resolve={userPosts} errorElement={<p>Error loading posts!</p>}>
-              {(postResponse) => {
-                const posts = postResponse.posts;
-                return Array.isArray(posts) && posts.length > 0 ? (
-                  posts.map((post) => (
-                    <PostCard
-                      key={post._id}
-                      data={post}
-                      // handleEvent={handleDelete}
-                    />
-                  ))
-                ) : (
-                  <p>No posts available</p>
-                );
-              }}
-            </Await>
-          </Suspense>
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p>Error loading posts: {error}</p>
+          ) : (
+            <>
+              {Array.isArray(userPosts?.posts) && userPosts.posts.length > 0 ? (
+                userPosts.posts.map((post) => (
+                  <PostCard
+                    key={post._id}
+                    data={post}
+                  />
+                ))
+              ) : (
+                <p>Không có bài tin phù hợp</p>
+              )}
+            </>
+          )}
         </div>
 
         {/* Pagination */}

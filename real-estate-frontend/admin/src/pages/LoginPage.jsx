@@ -3,11 +3,13 @@ import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import apiRequest from '../services/apiRequest';
 import Images from '../components/Images';
+import { Eye, EyeOff } from '../components/Icons';
 
 function LoginPage() {
   const { updateAdmin } = useContext(AuthContext);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSumbit = async (element) => {
@@ -22,10 +24,9 @@ function LoginPage() {
 
     try {
       const response = await apiRequest.post('/auth/admin/login', data);
-      console.log('response', response);
       if (response.data.success) {
         updateAdmin(response.data);
-        console.log('response when login success', response.data);
+        // console.log('response when login success', response.data);
         navigate('/admin/dashboard');
       } else {
         setError(response?.data?.message || 'Login failed');
@@ -35,7 +36,6 @@ function LoginPage() {
     } finally {
       setIsLoading(false);
     }
-    console.log('data', data);
   };
   return (
     <div className='h-[100vh] flex justify-center items-center font-lexend font-normal text-sm relative'>
@@ -72,14 +72,23 @@ function LoginPage() {
         <label htmlFor='password' className='text-sm font-light mb-2'>
           Mật khẩu <span className='text-red-600 font-medium'>*</span>
         </label>
-        <input
-          type='password'
-          id='password'
-          name='password'
-          placeholder='Nhập mật khẩu'
-          className='bg-slate-100 text-sm font-light p-2 mb-2 focus:outline-none rounded'
-          required
-        />
+        <div className='relative'>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            id='password'
+            name='password'
+            placeholder='Nhập mật khẩu'
+            className='bg-slate-100 text-sm font-light p-2 mb-2 focus:outline-none rounded w-full'
+            required
+          />
+          <button
+            type='button'
+            className='text-gray-500 absolute right-2 top-2'
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
 
         {error && (
           <span className='text-xs text-red-500 font-light'>

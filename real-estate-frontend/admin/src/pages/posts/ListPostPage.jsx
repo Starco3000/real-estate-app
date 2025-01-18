@@ -1,21 +1,17 @@
-import { Suspense, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChevronLeft, ChevronRight, Reload, Search } from '../../components/Icons';
+import { showToast } from '../../components/Toast';
+import apiRequest from '../../services/apiRequest';
 import PostCard from '../../components/PostCard';
 import Filter from '../../components/filter/Filter';
-import {
-  Await,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
-import apiRequest from '../../services/apiRequest';
-import { ChevronLeft, ChevronRight, Reload } from '../../components/Icons';
-import { showToast } from '../../components/Toast';
 import SwitchBtn from '../../components/SwitchBtn';
+import LoaderSpinner from '../../components/LoaderSpinner';
 
 function ListPostPage() {
-  const data = useLoaderData();
-  const postResponses = data.postResponse.data;
-  const totalPages = postResponses ? postResponses.totalPages : 1;
+  const [posts, setPosts] = useState();
+  const [loading, setLoading] = useState(true);
+  const totalPages = posts ? posts.totalPages : 1;
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState('');
   const [isUpdate, setIsUpdate] = useState(false);
@@ -29,18 +25,35 @@ function ListPostPage() {
     keyword: searchParams.get('keyword') || '',
   });
 
+  useEffect(() => {
+    async function getPosts() {
+      setLoading(true);
+      const response = await apiRequest(
+        `/admin/posts?${searchParams.toString()}`,
+      );
+      setPosts(response.data);
+      setLoading(false);
+    }
+    getPosts();
+  }, [searchParams]);
+
   const currentPage = useMemo(
     () => parseInt(searchParams.get('page') || '1', 10),
     [searchParams],
   );
-  const handlePageChange = (page) => {
-    setSearchParams({ ...query, page });
-  };
-  const handleSwitchChange = (newState) => {
-    setIsUpdate(newState);
-  };
 
-  const handleSearch = () => {
+  const handlePageChange = useCallback(
+    (page) => {
+      setSearchParams({ ...query, page });
+    },
+    [query, setSearchParams],
+  );
+
+  const handleSwitchChange = useCallback((newState) => {
+    setIsUpdate(newState);
+  }, []);
+
+  const handleSearch = useCallback(() => {
     const queryString = new URLSearchParams({
       status: query.status ? query.status.value : '',
       province: query.province ? query.province.name : '',
@@ -52,9 +65,9 @@ function ListPostPage() {
       pageSize: 10, // Add pageSize parameter
     }).toString();
     navigate(`/admin/list?${queryString}`);
-  };
+  }, [query, searchInput, navigate]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setQuery({
       status: '',
       province: '',
@@ -65,25 +78,21 @@ function ListPostPage() {
     });
     setSearchInput('');
     setSearchParams({});
-  };
+  }, [setSearchParams]);
 
-  const handleDelete = async (e) => {
+  const handleDelete = useCallback(async (e, postId) => {
     e.stopPropagation();
     e.preventDefault();
     try {
-      await apiRequest.delete(`/admin/posts/${data._id}`);
+      await apiRequest.delete(`/admin/posts/${postId}`);
       showToast('Xóa bài viết thành công', 'success');
     } catch (error) {
       showToast('Xóa bài viết thất bại', 'error');
     }
-  };
-
-  const handleNewPost = () => {
-    navigate('/admin/add-post');
-  };
+  }, []);
 
   return (
-    <div className='w-full h-full pb-4 bg-main font-lexend font-normal text-sm relative '>
+    <div className='w-full h-auto pb-4 bg-main font-lexend font-normal text-sm relative '>
       <div className='w-full h-20 bg-white flex items-center px-10'>
         <h1 className='text-2xl font-medium'>Danh sách bài viết</h1>
       </div>
@@ -102,10 +111,10 @@ function ListPostPage() {
               onChange={(e) => setSearchInput(e.target.value)}
             />
             <button
-              className='w-16 h-10 bg-primary text-white py-1 px-2 rounded'
+              className='w-10 h-10 bg-primary flex justify-center items-center text-white rounded'
               onClick={handleSearch}
             >
-              Search
+              <Search />
             </button>
           </div>
         </div>
@@ -127,29 +136,24 @@ function ListPostPage() {
       </div>
       {/* Post List*/}
       <div className='px-4 py-2 grid grid-cols-1 gap-2'>
-        <Suspense fallback={<p>Loading...</p>}>
-          <Await
-            resolve={data.postResponse}
-            errorElement={<p>Error loading posts!</p>}
-          >
-            {(postResponse) => {
-              const posts = postResponse.data.posts;
-              console.log('posts', posts);
-              return Array.isArray(posts) && posts.length > 0 ? (
-                posts.map((post) => (
-                  <PostCard
-                    key={post._id}
-                    data={post}
-                    handleEvent={handleDelete}
-                    isUpdate={isUpdate}
-                  />
-                ))
-              ) : (
-                <p>No posts available</p>
-              );
-            }}
-          </Await>
-        </Suspense>
+        {loading ? (
+          <div className='w-full h-auto flex justify-center items-center'>
+            <LoaderSpinner />
+          </div>
+        ) : posts !== undefined && posts.posts.length > 0 ? (
+          posts.posts.map((post) => (
+            <PostCard
+              key={post._id}
+              data={post}
+              handleEvent={handleDelete}
+              isUpdate={isUpdate}
+            />
+          ))
+        ) : (
+          <div className='h-[56vh]'>
+            <p>No posts available</p>
+          </div>
+        )}
       </div>
       {/* Pagination */}
       <div className='w-full h-9 my-4 flex justify-center gap-x-1'>

@@ -9,7 +9,6 @@ import InputField from '../../components/inputField/InputField';
 import Selector from '../../components/Selector';
 import RichText from '../../components/RichText';
 import NewsPreview from '../../components/NewsPreview';
-import { newsDetailLoader } from '../../services/dataLoaders';
 
 function UpdateNewsPage() {
   const { id } = useParams();
@@ -28,22 +27,22 @@ function UpdateNewsPage() {
   });
 
   useEffect(() => {
-    const fetchNewsData = async () => {
+    async function fetchNewsData() {
       try {
-        const data = await newsDetailLoader({ params: { id } });
-        const news = data.news;
-        console.log('News:', news);
+        const response = await apiRequest(`/admin/news/single-news/${id}`);
+        const newsData = response?.data?.news;
+        console.log('Data:', newsData);
         setFormValues({
-          title: news.title,
-          description: news.description,
+          title: newsData?.title,
+          description: newsData?.description,
         });
-        setSelectedType({ name: news.type });
-        setThumbnail({ url: news.thumbnail });
-        setDescription(news.description);
+        setSelectedType({ name: newsData?.type });
+        setThumbnail({ url: newsData?.thumbnail });
+        setDescription(newsData?.description);
       } catch (error) {
         console.log('Error:', error);
       }
-    };
+    }
     fetchNewsData();
   }, [id]);
 
@@ -76,7 +75,6 @@ function UpdateNewsPage() {
 
   const handleUploadPhoto = (e) => {
     const selectedFile = e.target.files[0];
-    console.log('file', selectedFile);
     if (!selectedFile) return;
     setFile(selectedFile); // Store the selected file in the state
     const reader = new FileReader();
@@ -92,7 +90,6 @@ function UpdateNewsPage() {
     const formData = new FormData(e.target);
     const title = formData.get('title');
     const type = selectedType?.value;
-    // const image = thumbnail?.url;
 
     let imageUrl = '';
     if (file) {
@@ -108,7 +105,6 @@ function UpdateNewsPage() {
       description,
     };
     try {
-      console.log('Data:', datas);
       const request = await apiRequest.put(
         `/admin/news/update-news/${id}`,
         datas,

@@ -10,7 +10,7 @@ function Dashboard() {
         className='w-full h-full object-cover absolute'
       />
       <div className='w-full h-ful flex justify-center items-center absolute top-0 left-0 bottom-0 right-0'>
-        <h1 className='font-bold text-7xl border-4 text-white'>Welcome to back</h1>
+        <h1 className='font-bold text-7xl border-4 text-white'>Chào mừng bạn trở lại</h1>
       </div>
     </div>
   );

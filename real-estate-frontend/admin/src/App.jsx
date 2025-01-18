@@ -14,11 +14,6 @@ import NewsDetailPage from './pages/news/NewsDetailPage';
 import AddNewsPage from './pages/news/AddNewsPage';
 import UpdateNewsPage from './pages/news/UpdateNewsPage';
 import SettingPage from './pages/SettingPage';
-import {
-  listPostLoader,
-  postDetailLoader,
-  userPostsLoader,
-} from './services/dataLoaders';
 
 function App() {
   const router = createBrowserRouter([
@@ -47,7 +42,6 @@ function App() {
         {
           path: 'list',
           element: <ListPostPage />,
-          loader: listPostLoader,
         },
         {
           path: 'add-post',
@@ -60,7 +54,6 @@ function App() {
         {
           path: ':id',
           element: <PostDetailPage />,
-          loader: postDetailLoader,
         },
         {
           path: 'users',
@@ -69,7 +62,6 @@ function App() {
         {
           path: 'users/user/:id/posts',
           element: <AccountListPostPage />,
-          loader: userPostsLoader,
         },
         {
           path: 'news',

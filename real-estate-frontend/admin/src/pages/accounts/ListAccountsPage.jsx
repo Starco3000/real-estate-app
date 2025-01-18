@@ -3,7 +3,7 @@ import { Link, useLoaderData, useSearchParams } from 'react-router-dom';
 import apiRequest from '../../services/apiRequest';
 import InputField from '../../components/inputField/InputField';
 import { showToast } from '../../components/Toast';
-import { ChevronLeft, ChevronRight, Reload } from '../../components/Icons';
+import { ChevronLeft, ChevronRight, Reload, Search } from '../../components/Icons';
 
 function ListAccountsPage() {
   const [data, setData] = useState(null);
@@ -69,10 +69,6 @@ function ListAccountsPage() {
     setSearchParams({ keyword: searchInput, page });
   };
 
-  // const handleDeactivate = (userId) => {
-  //   // Implement deactivate logic here
-  // };
-
   const handleDelete = async (accountId) => {
     try {
       await apiRequest.delete(`/admin/users/user/${accountId}`);
@@ -87,7 +83,7 @@ function ListAccountsPage() {
   };
 
   return (
-    <div className='w-full h-full mx-auto bg-main font-lexend font-normal text-sm'>
+    <div className='w-full h-auto mx-auto bg-main font-lexend font-normal text-sm'>
       <div className='w-full h-20 bg-white flex items-center px-10'>
         <h1 className='text-2xl font-medium'>Danh sách tài khoản người dùng</h1>
       </div>
@@ -113,19 +109,19 @@ function ListAccountsPage() {
             className='w-auto h-auto p-2.5 bg-primary rounded text-white'
             onClick={searchAccount}
           >
-            Seach
+            <Search />
           </button>
         </div>
       </div>
-      <table className='w-[97%] mx-4 bg-white border border-gray-500 rounded overflow-hidden'>
+      <table className='w-[97%]  mx-4 bg-white border border-gray-500 rounded overflow-hidden'>
         <thead>
           <tr>
             <th className='p-2 border border-gray-400'>STT</th>
             <th className='p-2 border border-gray-400'>Email</th>
-            <th className='p-2 border border-gray-400'>Name</th>
+            <th className='p-2 border border-gray-400'>Họ và Tên</th>
             <th className='p-2 border border-gray-400'>Điện thoại</th>
-            <th className='p-2 border border-gray-400'>Số bài post</th>
-            <th className='p-2 border border-gray-400'>Action</th>
+            <th className='p-2 border border-gray-400'>Số bài tin</th>
+            <th className='p-2 border border-gray-400'>Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -142,25 +138,24 @@ function ListAccountsPage() {
               </td>
               <td className='p-2 text-center flex flex-col items-center gap-y-1'>
                 <button
-                  className='bg-yellow-500 text-white px-2 py-1 rounded mr-2'
+                  className='w-[120px] bg-yellow-500 text-white px-2 py-1 rounded '
                   onClick={() =>
                     handleToggleUserStatus(account?._id, account?.isDisabled)
                   }
-                  // disabled={account?.isDisabled}
                 >
-                  {account?.isDisabled ? 'Enable' : 'Disable'}
+                  {account?.isDisabled ? 'Kích hoạt' : 'Vô hiệu hóa'}
                 </button>
                 <button
-                  className='bg-red-500 text-white px-2 py-1 rounded'
+                  className='w-[120px] bg-red-500 text-white px-2 py-1 rounded'
                   onClick={() => handleDelete(account?._id)}
                 >
-                  Delete
+                  Xóa tài khoản
                 </button>
                 <Link
                   to={`/admin/users/user/${account?._id}/posts`}
-                  className='bg-blue-500 text-white text-nowrap px-2 py-1 rounded'
+                  className='w-[120px] bg-blue-500 text-white text-nowrap px-2 py-1 rounded'
                 >
-                  View Posts
+                  Xem bài viết
                 </Link>
               </td>
             </tr>

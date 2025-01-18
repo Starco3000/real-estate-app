@@ -80,7 +80,7 @@ function SettingPage() {
               className='w-20 h-10 bg-primary text-white text-sm rounded-md'
               onClick={handleOpenUploadPhoto}
             >
-              Change Photo
+              Đổi ảnh
             </button>
             <input
               type='file'
@@ -96,7 +96,7 @@ function SettingPage() {
           {/* Infomation */}
           <div>
             <div className='mt-5 '>
-              <label className='font-medium text-sm'>Username</label>
+              <label className='font-medium text-sm'>Tên người dùng</label>
               <input
                 id='username'
                 name='username'

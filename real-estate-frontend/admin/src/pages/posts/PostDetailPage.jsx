@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import Avatar from '../../components/Avatar';
 import SliderInPost from '../../components/slider/SliderInPost';
@@ -12,7 +12,9 @@ import {
   formatDate,
 } from '../../components/FormatValue';
 import 'react-quill-new/dist/quill.snow.css';
-
+import apiRequest from '../../services/apiRequest';
+import LoaderSpinner from '../../components/LoaderSpinner';
+import OtherEstate from '../../components/OtherEstate';
 
 const directionMapping = {
   north: 'Hướng Bắc',
@@ -26,15 +28,59 @@ const directionMapping = {
 };
 
 function PostDetailPage() {
-  const post = useLoaderData();
-  const postInfo = post.post;
-  const postDetailInfo = post.post.postDetailId;
-  const agentInfo = post.post.userId;
+  const { id } = useParams();
+  // const post = useLoaderData();
+  // const postInfo = post.post;
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function getPostDetail() {
+      setLoading(true);
+      try {
+        const response = await apiRequest.get(`/posts/${id}`);
+        setPost(response.data.post);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    }
+    getPostDetail();
+  }, [id]);
 
   const handleBack = () => {
     navigate(-1);
   };
+
+  const handleCopyToClipboard = () => {
+    const textToCopy = agentInfo?.phone || 'Liên hệ';
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        alert('Số điện thoại đã được sao chép vào clipboard!');
+      })
+      .catch((err) => {
+        console.error('Failed to copy: ', err);
+      });
+  };
+
+  if (loading) {
+    return (
+      <div className='w-full h-full flex justify-center items-center'>
+        <LoaderSpinner />
+      </div>
+    );
+  }
+
+  if (error) return `Error loading post: ${error}`;
+  if (!post) return 'No post available';
+
+  const postDetailInfo = post.postDetailId;
+  const agentInfo = post?.userId;
 
   return (
     <div className='w-full h-auto bg-white font-lexend font-normal text-sm pt-10'>
@@ -49,7 +95,7 @@ function PostDetailPage() {
         <div className='w-full max-w-[845px] bg-white md:mb-10'>
           {/* Image Estate */}
           <div className='w-full md:h-[580px]'>
-            <SliderInPost images={postDetailInfo.images} />
+            <SliderInPost images={postDetailInfo?.images} />
           </div>
           {/* Breadcrumb */}
           {/* <div className='w-full h-[30px] bg-yellow-400 mt-20 md:mt-4'>
@@ -58,13 +104,13 @@ function PostDetailPage() {
           {/* Info Estate */}
           <div className='px-3 md:px-0'>
             <h1 className='font-medium text-lg md:text-2xl line-clamp-2 my-2'>
-              {postInfo.title}
+              {post?.title}
             </h1>
 
             <div className='my-4'>
               <span>
-                {postInfo.address}, {postInfo.ward[1]}, {postInfo.district[1]},{' '}
-                {postInfo.province[1]}
+                {post.address}, {post.ward[1]}, {post.district[1]},{' '}
+                {post.province[1]}
               </span>
             </div>
 
@@ -73,24 +119,24 @@ function PostDetailPage() {
                 <div className='flex flex-col gap-y-2'>
                   <span className='opacity-40'>Mức giá</span>
                   <span className='font-semibold text-base text-primary'>
-                    {formatPrice(postInfo.price)}
+                    {formatPrice(post.price)}
                   </span>
                 </div>
                 <div className='flex flex-col gap-y-2'>
                   <span className='opacity-40'>Diện tích</span>
                   <span className='font-semibold text-base text-primary'>
-                    {formatSize(postInfo.size)}
+                    {formatSize(post.size)}
                   </span>
                 </div>
               </div>
-              <div className='flex items-center'>
+              {/* <div className='flex items-center'>
                 <Link
                   to='/favorite'
                   className='w-7 h-7 border-[1px] border-black flex justify-center items-center rounded cursor-pointer'
                 >
                   <Favorite className='text-xl text-black' />
                 </Link>
-              </div>
+              </div> */}
             </div>
 
             {/* Description Estate */}
@@ -108,13 +154,13 @@ function PostDetailPage() {
               <div className='flex justify-between border-b-[1px] border-gray-200'>
                 <span>Diện tích</span>
                 <span className='text-primary font-bold'>
-                  {formatSize(postInfo.size)}
+                  {formatSize(post.size)}
                 </span>
               </div>
               <div className='flex justify-between border-b-[1px] border-gray-200'>
                 <span>Mức giá</span>
                 <span className='text-primary font-bold'>
-                  {formatPrice(postInfo.price)}
+                  {formatPrice(post.price)}
                 </span>
               </div>
               <div className='flex justify-between border-b-[1px] border-gray-200'>
@@ -126,20 +172,16 @@ function PostDetailPage() {
               <div className='flex justify-between border-b-[1px] border-gray-200'>
                 <span>Hướng nhà</span>
                 <span className='text-primary font-bold'>
-                  {directionMapping[postInfo.direction] || postInfo.direction}
+                  {directionMapping[post.direction] || post.direction}
                 </span>
               </div>
               <div className='flex justify-between border-b-[1px] border-gray-200'>
                 <span>Số phòng ngủ</span>
-                <span className='text-primary font-bold'>
-                  {postInfo.bedroom}
-                </span>
+                <span className='text-primary font-bold'>{post.bedroom}</span>
               </div>
               <div className='flex justify-between border-b-[1px] border-gray-200'>
                 <span>Số phòng vệ sinh</span>
-                <span className='text-primary font-bold'>
-                  {postInfo.bathroom}
-                </span>
+                <span className='text-primary font-bold'>{post.bathroom}</span>
               </div>
             </div>
 
@@ -159,17 +201,17 @@ function PostDetailPage() {
             <div className='md:my-10 py-5 grid grid-cols-2 grid-rows-2 md:grid-cols-3 md:grid-rows-1 gap-10 items-center border-y-[1px] border-gray-200'>
               <div className='flex flex-col'>
                 <span className='font-medium text-primary pb-1'>Ngày đăng</span>
-                <span>{formatDate(postInfo.createdAt)}</span>
+                <span>{formatDate(post.createdAt)}</span>
               </div>
               <div className='flex flex-col'>
                 <span className='font-medium text-primary pb-1'>
                   Loại bài tin
                 </span>
-                <span>{postInfo.status === 'buy' ? 'Bán' : 'Cho Thuê'}</span>
+                <span>{post.status === 'buy' ? 'Bán' : 'Cho Thuê'}</span>
               </div>
               <div className='flex flex-col'>
                 <span className='font-medium text-primary pb-1'>Mã tin</span>
-                <span>{postInfo._id}</span>
+                <span>{post._id}</span>
               </div>
             </div>
           </div>
@@ -190,49 +232,32 @@ function PostDetailPage() {
                   height={65}
                 />
                 <span className='my-3 font-medium text-base text-primary'>
-                  {agentInfo?.username || 'Người đăng'}
+                  {agentInfo.name || 'Người đăng'}
                 </span>
               </div>
               <div className='w-full row-start-2 '>
-                <button className='w-full h-12 bg-primary font-medium text-white rounded-md mb-2'>
+                <button
+                  className='w-full h-12 bg-primary font-medium text-white rounded-md mb-2'
+                  onClick={handleCopyToClipboard}
+                >
                   {agentInfo?.phone || 'Liên hệ'}
                 </button>
-                <button className='w-full h-12 border-[1px] font-medium border-gray-300 rounded-md'>
-                  <Link to='/chat'>Chat ngay</Link>
-                </button>
+                <a
+                  href={`https://zalo.me/${agentInfo?.phone}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='no-underline'
+                >
+                  <button className='w-full h-12 border-[1px] font-medium border-gray-300 rounded-md'>
+                    Chat Zalo ngay
+                  </button>
+                </a>
               </div>
             </div>
           </div>
 
           {/* Related Post */}
-          <div className='mt-4 px-5 py-4 border-[1px] border-gray-300 rounded-md flex flex-col justify-center items-start shadow-sm '>
-            <span className='font-semibold text-primary text-base'>
-              Bất động sản liên quan
-            </span>
-            <ul>
-              <li className='mt-4 hover:opacity-60'>
-                <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-              </li>
-              <li className='mt-4 hover:opacity-60'>
-                <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-              </li>
-              <li className='mt-4 hover:opacity-60'>
-                <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-              </li>
-              <li className='mt-4 hover:opacity-60'>
-                <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-              </li>
-              <li className='mt-4 hover:opacity-60'>
-                <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-              </li>
-              <li className='mt-4 hover:opacity-60'>
-                <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-              </li>
-              <li className='mt-4 hover:opacity-60'>
-                <Link to='/list'>Bán nhà Phường X Quận Y</Link>
-              </li>
-            </ul>
-          </div>
+          <OtherEstate district={post.district} status={post.status} />
         </div>
       </div>
     </div>
