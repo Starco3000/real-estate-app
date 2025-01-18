@@ -24,6 +24,7 @@ const PostSchema = new mongoose.Schema(
     type: { type: String },
     status: { type: String },
     direction: { type: String },
+    views: { type: Number, default: 0 },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -69,60 +70,60 @@ const FavoriteSchema = new mongoose.Schema(
   },
   { versionKey: false },
 );
-const MessageSchema = new mongoose.Schema(
-  {
-    _id: mongoose.Schema.Types.ObjectId,
-    text: {
-      type: String,
-      default: '',
-    },
-    imageUrl: {
-      type: String,
-      default: '',
-    },
-    videoUrl: {
-      type: String,
-      default: '',
-    },
-    seen: {
-      type: Boolean,
-      default: false,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    chatId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'Chat',
-    },
-  },
-  { timestamps: true },
-);
-const ChatSchema = new mongoose.Schema(
-  {
-    _id: mongoose.Schema.Types.ObjectId,
-    from_user_to: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    to_agent: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Agent',
-      required: true,
-    },
-    message: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
-    },
-    lastMessage: { type: String },
-    timestamp: { type: Date, default: Date.now },
-    // status: { type: String},
-  },
-  { versionKey: false },
-);
+// const MessageSchema = new mongoose.Schema(
+//   {
+//     _id: mongoose.Schema.Types.ObjectId,
+//     text: {
+//       type: String,
+//       default: '',
+//     },
+//     imageUrl: {
+//       type: String,
+//       default: '',
+//     },
+//     videoUrl: {
+//       type: String,
+//       default: '',
+//     },
+//     seen: {
+//       type: Boolean,
+//       default: false,
+//     },
+//     userId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'User',
+//       required: true,
+//     },
+//     chatId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       required: true,
+//       ref: 'Chat',
+//     },
+//   },
+//   { timestamps: true },
+// );
+// const ChatSchema = new mongoose.Schema(
+//   {
+//     _id: mongoose.Schema.Types.ObjectId,
+//     from_user_to: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'User',
+//       required: true,
+//     },
+//     to_agent: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'Agent',
+//       required: true,
+//     },
+//     message: {
+//       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+//     },
+//     lastMessage: { type: String },
+//     timestamp: { type: Date, default: Date.now },
+//     // status: { type: String},
+//   },
+//   { versionKey: false },
+// );
 const UserSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
@@ -146,29 +147,30 @@ const UserSchema = new mongoose.Schema(
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-    chats: { type: [ChatSchema], default: [] },
+    // chats: { type: [ChatSchema], default: [] },
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   },
   { versionKey: false },
 );
-const AgentSchema = new mongoose.Schema(
-  {
-    _id: mongoose.Schema.Types.ObjectId,
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    posts: { type: [PostSchema], default: [] },
-  },
-  { versionKey: false },
-);
+// const AgentSchema = new mongoose.Schema(
+//   {
+//     _id: mongoose.Schema.Types.ObjectId,
+//     userId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: 'User',
+//       required: true,
+//     },
+//     posts: { type: [PostSchema], default: [] },
+//   },
+//   { versionKey: false },
+// );
 const NewsSchema = new mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
     title: { type: String, required: true },
     thumbnail: { type: String, required: true },
     description: { type: String, required: true },
+    types: { type: String, required: true },
     views: { type: Number, default: 0 },
     authorId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -208,25 +210,25 @@ const AdminSchema = new mongoose.Schema(
 
 //Models
 const Admin = mongoose.model('Admin', AdminSchema);
-const Agent = mongoose.model('Agent', AgentSchema);
+// const Agent = mongoose.model('Agent', AgentSchema);
 const User = mongoose.model('User', UserSchema);
 const Post = mongoose.model('Post', PostSchema);
 const PostDetail = mongoose.model('PostDetail', PostDetailSchema);
 const Favorite = mongoose.model('Favorite', FavoriteSchema);
 const News = mongoose.model('News', NewsSchema);
 const Account = mongoose.model('Account', AccountSchema);
-const Chat = mongoose.model('Chat', ChatSchema);
-const Message = mongoose.model('Message', MessageSchema);
+// const Chat = mongoose.model('Chat', ChatSchema);
+// const Message = mongoose.model('Message', MessageSchema);
 
 module.exports = {
   Admin,
   User,
-  Agent,
+  // Agent,
   Post,
   PostDetail,
   Favorite,
   News,
   Account,
-  Chat,
-  Message,
+  // Chat,
+  // Message,
 };

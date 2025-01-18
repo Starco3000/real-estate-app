@@ -91,7 +91,7 @@ async function getPosts(request, response) {
     // console.log('Constructed Query:', query);
 
     // Fetch the total number of posts matching the query
-    const totalPosts = await Models.Post.countDocuments(query);
+    // const totalPosts = await Models.Post.countDocuments(query);
 
     // Fetch the posts with pagination
     const posts = await Models.Post.find(query)
@@ -101,7 +101,7 @@ async function getPosts(request, response) {
       .limit(limit);
 
     // Calculate the total number of pages
-    const totalPages = Math.ceil(totalPosts / pageSize);
+    const totalPages = Math.ceil(posts.length / pageSize);
 
     // Return the posts and total pages to the client
     response.status(200).json({
@@ -118,7 +118,11 @@ async function getPosts(request, response) {
 async function getPost(request, response) {
   const _id = request.params.id;
   try {
-    const post = await Models.Post.findById(_id)
+    const post = await Models.Post.findByIdAndUpdate(
+      _id,
+      { $inc: { views: 1 } },
+      { new: true },
+    )
       .populate('postDetailId', 'description images certificate coordinate')
       .populate('userId', 'avatar name phone');
     response.status(200).json({ post, success: true });
@@ -306,6 +310,21 @@ async function getTopProvinces(request, response) {
   }
 }
 
+async function getPopularPosts(request, response) {
+  try {
+    const popularPosts = await Models.Post.find()
+      .populate('postDetailId', 'images ')
+      .populate('userId', 'avatar name')
+      .sort({ views: -1 })
+      .limit(10);
+
+    response.status(200).json(popularPosts);
+  } catch (error) {
+    console.error('Error fetching popular posts:', error);
+    response.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 module.exports = {
   getPosts,
   getPost,
@@ -314,4 +333,5 @@ module.exports = {
   deletePost,
   getLatestPost,
   getTopProvinces,
+  getPopularPosts,
 };

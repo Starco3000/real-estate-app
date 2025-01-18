@@ -8,6 +8,7 @@ const {
   deletePost,
   getLatestPost,
   getTopProvinces,
+  getPopularPosts,
 } = require('../controllers/PostController.js');
 
 const router = express.Router();
@@ -15,6 +16,7 @@ const router = express.Router();
 // Customer routes
 router.get('/latest-posts', getLatestPost);
 router.get('/top-provinces', getTopProvinces);
+router.get('/popular', getPopularPosts);
 router.get('/', getPosts);
 router.get('/:id', getPost);
 router.post('/', verifyUserToken, addPost);
