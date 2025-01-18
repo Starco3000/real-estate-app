@@ -15,7 +15,7 @@ const app = express();
 
 const allowedOrigins = [
   'https://kimdienhomes.onrender.com',
-  'https://kimdienhomes-admin.onrender.com',
+  'https://real-estate-app-admin.onrender.com',
 ];
 
 app.use(
