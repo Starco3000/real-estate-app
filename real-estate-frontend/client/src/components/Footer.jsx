@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaEnvelope, FaPhoneVolume } from 'react-icons/fa6';
-import logo from '../assets/Logo-navbar-gray.png';
+import logo from '../assets/logo-navbar-gray.png';
 import Drawer from './Drawer';
 
 const Footer = () => {
