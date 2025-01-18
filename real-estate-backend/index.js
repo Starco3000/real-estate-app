@@ -38,7 +38,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookiesParser());
 
-const PORT = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 
 //api customer endpoints
 app.use('/api/auth', authRoute);
@@ -55,7 +55,7 @@ app.use('/api/admin/news', newsRoute);
 app.use('/api/admin', adminRoute);
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
   });
 });
