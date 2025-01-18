@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const URL = `${import.meta.env.VITE_BACKEND_URL}`;
-const url = "https://real-estate-app-backend-hj1p.onrender.com"
+// const URL = `${import.meta.env.VITE_BACKEND_URL}`;
+const URL = "https://real-estate-app-backend-hj1p.onrender.com"
 
 const apiRequest = axios.create({
-  baseURL: url,
+  baseURL: URL,
   withCredentials: true,
 });
 
