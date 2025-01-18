@@ -1,7 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import apiRequest from '../services/apiRequest';
-import { postDetailLoader } from '../services/dataLoaders';
 import useLocationData from '../hooks/useLocationData';
 import SizeInput from '../components/inputField/SizeInput';
 import PriceInput from '../components/inputField/PriceInput';
@@ -58,10 +57,10 @@ function UpdatePostPage() {
   useEffect(() => {
     const fetchPostData = async () => {
       try {
-        const data = await postDetailLoader({ params: { id } });
-        console.log('data:', data);
-        const postDetailId = data.post.postDetailId;
-        const price = data.post.price;
+        const response = await apiRequest(`/posts/${id}`);
+        const postData = response?.data?.post;
+        const postDetailId = postData.postDetailId;
+        const price = postData.price;
         const priceDetails =
           price >= 1e9
             ? {
@@ -75,40 +74,40 @@ function UpdatePostPage() {
                 convertedValue: price,
               };
         setFormValues({
-          title: data.post.title,
-          address: data.post.address,
-          bedroom: data?.post?.bedroom,
-          bathroom: data?.post?.bathroom,
+          title: postData.title,
+          address: postData.address,
+          bedroom: postData?.bedroom,
+          bathroom: postData?.bathroom,
           latitude: postDetailId?.coordinate?.latitude,
           longitude: postDetailId?.coordinate?.longitude,
           price: priceDetails,
           size: {
-            amount: data.post.size,
+            amount: postData.size,
             unit: 'm²',
-            convertedValue: data.post.size,
+            convertedValue: postData.size,
           },
         });
         setImages(postDetailId.images);
-        setSelectedType({ name: data.post.type });
+        setSelectedType({ name: postData.type });
         setSelectedProvince({
-          code: data?.post?.province[0],
-          name: data?.post?.province[1],
+          code: postData.province[0],
+          name: postData.province[1],
         });
         setSelectedDistrict({
-          code: data?.post?.district[0],
-          name: data?.post?.district[1],
+          code: postData.district[0],
+          name: postData.district[1],
         });
         setSelectedWard({
-          code: data?.post?.ward[0],
-          name: data?.post?.ward[1],
+          code: postData.ward[0],
+          name: postData.ward[1],
         });
         setSelectedDirection({
-          name: data.post.direction,
+          name: postData.direction,
         });
         setSelectedCertificate({ name: postDetailId.certificate });
         setValue(postDetailId.description);
         dispatch({
-          type: data.post.status === 'buy' ? SELECT_FOR_SALE : SELECT_FOR_RENT,
+          type: postData.status === 'buy' ? SELECT_FOR_SALE : SELECT_FOR_RENT,
         });
       } catch (error) {
         console.error('Failed to fetch post data', error);
