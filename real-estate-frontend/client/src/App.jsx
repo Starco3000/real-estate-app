@@ -8,11 +8,6 @@ import ProfilePage from './pages/ProfilePage';
 import PostDetailPage from './pages/PostDetailPage';
 import ListPostPage from './pages/ListPostPage';
 import AddPostPage from './pages/AddPostPage';
-import {
-  favoritePostLoader,
-  ListNewsLoader,
-  userPostLoader,
-} from './services/dataLoaders';
 import FavoritePostPage from './pages/FavoritePostPage';
 import UpdatePostPage from './pages/UpdatePostPage';
 import UserPostPage from './pages/UserPostPage';
@@ -40,7 +35,6 @@ function App() {
         {
           path: '/news',
           element: <ListNewsPage />,
-          loader: ListNewsLoader,
         },
         {
           path: '/news/:id',
@@ -63,7 +57,6 @@ function App() {
         {
           path: '/profile',
           element: <ProfilePage />,
-          // loader: profilePageLoader,
         },
         {
           path: '/add-post',
@@ -76,12 +69,10 @@ function App() {
         {
           path: '/favorites',
           element: <FavoritePostPage />,
-          loader: favoritePostLoader,
         },
         {
           path: '/user-posts',
           element: <UserPostPage />,
-          loader: userPostLoader,
         },
       ],
     },

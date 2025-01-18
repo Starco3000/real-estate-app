@@ -1,22 +1,19 @@
-import { Suspense, useEffect, useMemo, useState } from 'react';
-import PostCardList from '../components/PostCardList';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from '../components/Icons';
-import debounce from 'lodash.debounce';
-import {
-  Await,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import apiRequest from '../services/apiRequest';
+import PostCardList from '../components/PostCardList';
 
 function FavoritePostPage() {
-  const data = useLoaderData();
-  const postFavCount = data.postResponse.favoriteCount;
-  const totalPages = data.postResponses ? data.postResponses.totalPages : 1;
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get('keyword') || '',
+  );
   const navigate = useNavigate();
-  const [query] = useState({
+  const [query, setQuery] = useState({
     keyword: searchParams.get('keyword') || '',
   });
 
@@ -24,23 +21,47 @@ function FavoritePostPage() {
     () => parseInt(searchParams.get('page') || '1', 10),
     [searchParams],
   );
+
   const handlePageChange = (page) => {
     setSearchParams({ ...query, page });
   };
 
-  const handleSearch = debounce((value) => {
+  const handleSearch = useCallback(() => {
     const queryString = new URLSearchParams({
-      keyword: value,
+      keyword: searchInput,
       page: 1, // Reset to first page on new search
       pageSize: 10, // Add pageSize parameter
     }).toString();
     navigate(`/favorites?${queryString}`);
-    console.log('Search Query:', queryString);
-  }, 300); // debounce delay
+  }, [searchInput, navigate]);
 
   useEffect(() => {
-    handleSearch(searchInput);
-  }, [searchInput]);
+    setSearchInput(searchParams.get('keyword') || '');
+  }, [searchParams]);
+
+  useEffect(() => {
+    async function getFavoritePosts() {
+      setIsLoading(true);
+      try {
+        const response = await apiRequest('/favorites', {
+          params: {
+            keyword: searchParams.get('keyword') || '',
+            page: currentPage,
+            pageSize: 10,
+          },
+        });
+        setData(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error);
+        setIsLoading(false);
+      }
+    }
+    getFavoritePosts();
+  }, [searchParams, currentPage]);
+
+  const postFavCount = data ? data.favoriteCount : 0;
+  const totalPages = data ? data.totalPages : 1;
 
   return (
     <div className='w-full h-auto mt-24 font-lexend font-normal text-sm flex flex-col items-center gap-y-5 '>
@@ -61,28 +82,32 @@ function FavoritePostPage() {
             placeholder='Tìm kiếm...'
             onChange={(e) => setSearchInput(e.target.value)}
           />
+          <button
+            type='button'
+            className='h-10 px-4 bg-primary text-white rounded'
+            onClick={handleSearch}
+          >
+            Tìm kiếm
+          </button>
         </div>
       </div>
       {/* List Post Favorite*/}
       <div className='w-full max-w-[694px] bg-inherit flex flex-col gap-y-4'>
-        <Suspense fallback={<p>Loading...</p>}>
-          <Await
-            resolve={data.postResponse}
-            errorElement={<p>Error loading posts!</p>}
-          >
-            {(postResponse) => {
-              const posts = postResponse.favorites;
-              console.log('posts', posts);
-              return Array.isArray(posts) && posts.length > 0 ? (
-                posts.map((post) => (
-                  <PostCardList key={post.postId._id} data={post.postId} />
-                ))
-              ) : (
-                <p>No posts available</p>
-              );
-            }}
-          </Await>
-        </Suspense>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error loading posts: {error.message}</p>
+        ) : (
+          <>
+            {Array.isArray(data.favorites) && data.favorites.length > 0 ? (
+              data.favorites.map((post) => (
+                <PostCardList key={post.postId._id} data={post.postId} />
+              ))
+            ) : (
+              <p>Không có bài tin được lưu</p>
+            )}
+          </>
+        )}
       </div>
       {/* Pagination */}
       <div className='w-full h-9 my-4 flex justify-center gap-x-1'>

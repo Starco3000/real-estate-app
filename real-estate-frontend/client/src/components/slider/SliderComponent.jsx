@@ -17,7 +17,7 @@ function SliderComponent({ children }) {
     dots: false,
     arrows: false,
     speed: 500,
-    lazyLoad: true,
+    lazyLoad: false,
     slidesToShow: 4,
     slidesToScroll: 1,
     initialSlide: 0,
@@ -64,7 +64,7 @@ function SliderComponent({ children }) {
       <div className='w-full flex justify-between absolute top-1/2 transform -translate-y-1/2'>
         <div className='w-full flex flex-row justify-between items-center relative'>
           <button
-            className='button w-10 h-10 bg-footer opacity-70 border-[1px] shadow-2xl rounded-full absolute -left-2 z-10'
+            className='button w-10 h-10 bg-footer opacity-70 border-[1px] shadow-2xl rounded-full absolute -left-6 z-10'
             style={{ pointerEvents: 'auto' }}
             onClick={previous}
           >

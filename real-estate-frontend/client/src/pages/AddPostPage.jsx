@@ -45,7 +45,6 @@ function AddPostPage() {
 
   const uploadPhotoRef = useRef();
   const navigate = useNavigate();
-  console.log('currentUser:', currentUser);
 
   useEffect(() => {
     if (currentUser.user.isDisabled === true) {

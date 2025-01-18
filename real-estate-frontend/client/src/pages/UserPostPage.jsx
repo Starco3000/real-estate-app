@@ -1,21 +1,18 @@
-import React, { Suspense, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Reload } from '../components/Icons';
+import apiRequest from '../services/apiRequest';
 import Filter from '../components/search/Filter';
 import PostCard from '../components/PostCard';
-import { ChevronLeft, ChevronRight, Reload } from '../components/Icons';
-import {
-  Await,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
 
 function UserPostPage() {
-  const data = useLoaderData();
-  const postResponses = data.posts;
-  console.log('User Post Page:', data.userPosts.posts);
-  const totalPages = postResponses ? postResponses.totalPages : 1;
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get('keyword') || '',
+  );
   const navigate = useNavigate();
   const [query, setQuery] = useState({
     status: searchParams.get('status') || '',
@@ -34,7 +31,7 @@ function UserPostPage() {
     setSearchParams({ ...query, page });
   };
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     const queryString = new URLSearchParams({
       status: query.status ? query.status.value : '',
       province: query.province ? query.province.name : '',
@@ -46,8 +43,7 @@ function UserPostPage() {
       pageSize: 10, // Add pageSize parameter
     }).toString();
     navigate(`/user-posts?${queryString}`);
-    console.log('Search Query:', query);
-  };
+  }, [query, searchInput, navigate]);
 
   const handleReset = () => {
     setQuery({
@@ -61,6 +57,38 @@ function UserPostPage() {
     setSearchInput('');
     setSearchParams({});
   };
+
+  useEffect(() => {
+    setSearchInput(searchParams.get('keyword') || '');
+  }, [searchParams]);
+
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const response = await apiRequest('/users/posts/userPosts', {
+          params: {
+            status: query.status,
+            province: query.province,
+            district: query.district,
+            ward: query.ward,
+            type: query.type,
+            keyword: query.keyword,
+            page: currentPage,
+            pageSize: 10,
+          },
+        });
+        setData(response.data);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, [query, currentPage]);
+
+  const totalPages = data ? data.totalPages : 1;
 
   return (
     <div className='w-full h-full p-4 bg-gray-200 border shadow-lg'>
@@ -87,10 +115,10 @@ function UserPostPage() {
                 onChange={(e) => setSearchInput(e.target.value)}
               />
               <button
-                className='w-16 h-10 bg-primary text-white py-1 px-2 rounded'
+                className='w-auto h-10 bg-primary text-white py-1 px-2 rounded'
                 onClick={handleSearch}
               >
-                Search
+                Tìm kiếm
               </button>
             </div>
           </div>
@@ -98,21 +126,19 @@ function UserPostPage() {
       </div>
       {/* Posts List*/}
       <div className='py-2 grid grid-cols-1 gap-2'>
-        <Suspense fallback={<p>Loading...</p>}>
-          <Await
-            resolve={data.userPosts.posts}
-            errorElement={<p>Error loading posts!</p>}
-          >
-            {(postResponse) => {
-              const posts = postResponse;
-              return Array.isArray(posts) && posts.length > 0 ? (
-                posts.map((post) => <PostCard key={post._id} data={post} />)
-              ) : (
-                <p>No posts available</p>
-              );
-            }}
-          </Await>
-        </Suspense>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error loading posts: {error}</p>
+        ) : (
+          <>
+            {Array.isArray(data.posts) && data.posts.length > 0 ? (
+              data.posts.map((post) => <PostCard key={post._id} data={post} />)
+            ) : (
+              <p>Bạn chưa có bài tin nào</p>
+            )}
+          </>
+        )}
       </div>
       {/* Pagination */}
       <div className='w-full h-9 my-4 flex justify-center gap-x-1'>

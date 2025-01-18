@@ -13,7 +13,6 @@ import LoaderSpinner from '../components/LoaderSpinner';
 import { formatPrice, formatSize, formatDate } from '../components/FormatValue';
 import 'react-quill-new/dist/quill.snow.css';
 
-
 const directionMapping = {
   north: 'Hướng Bắc',
   'north-east': 'Hướng Đông Bắc',
@@ -86,6 +85,18 @@ function PostDetailPage() {
       console.error('Failed to update favorite status:', error);
       showToast('Có lỗi xảy ra', 'error');
     }
+  };
+
+  const handleCopyToClipboard = () => {
+    const textToCopy = agentInfo?.phone || 'Liên hệ';
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        alert('Số điện thoại đã được sao chép vào clipboard!');
+      })
+      .catch((err) => {
+        console.error('Failed to copy: ', err);
+      });
   };
 
   if (isLoading) {
@@ -259,7 +270,10 @@ function PostDetailPage() {
               </span>
             </div>
             <div className='w-full row-start-2 '>
-              <button className='w-full h-12 bg-primary font-medium text-white rounded-md mb-2'>
+              <button
+                className='w-full h-12 bg-primary font-medium text-white rounded-md mb-2'
+                onClick={handleCopyToClipboard}
+              >
                 {agentInfo?.phone}
               </button>
               <a
@@ -269,7 +283,7 @@ function PostDetailPage() {
                 className='no-underline'
               >
                 <button className='w-full h-12 border-[1px] font-medium border-gray-300 rounded-md'>
-                  Chat ngay
+                  Chat Zalo ngay
                 </button>
               </a>
             </div>
@@ -277,7 +291,7 @@ function PostDetailPage() {
         </div>
 
         {/* Related Post */}
-        <OtherEstate district={postInfo.district} status={postInfo.status}/>
+        <OtherEstate district={postInfo.district} status={postInfo.status} />
       </div>
     </div>
   );

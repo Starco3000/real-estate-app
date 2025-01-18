@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { fetchWards } from '../services/apiService';
 
 function OtherEstate({ district, status }) {
-  // console.log('district:', district);
+  console.log('district:', district);
   const [wards, setWards] = useState([]);
   const [isStatus, setIsStatus] = useState();
 

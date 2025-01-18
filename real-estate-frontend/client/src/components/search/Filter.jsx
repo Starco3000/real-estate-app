@@ -16,7 +16,7 @@ function Filter({ query, setQuery }) {
     setQuery(newQuery);
   };
   return (
-    <div className='w-full h-auto bg-transparent flex justify-start items-start gap-2 '>
+    <div className='w-full h-auto bg-transparent flex lg:flex-nowrap md:flex-wrap justify-start items-start gap-2 '>
       <Selector
         selected={query.status}
         setSelected={(option) =>

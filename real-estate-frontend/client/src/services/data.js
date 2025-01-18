@@ -15,10 +15,10 @@ export const MenusLeft = [
     name: 'Cho thuê nhà đất',
     path: 'rent',
   },
-  {
-    name: 'Dự án',
-    path: 'project',
-  },
+  // {
+  //   name: 'Dự án',
+  //   path: 'project',
+  // },
   {
     name: 'Tin tức bất động sản',
     path: 'news',

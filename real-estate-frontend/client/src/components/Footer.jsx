@@ -7,9 +7,9 @@ import Drawer from './Drawer';
 
 const Footer = () => {
   const drawerItems1 = [
-    { label: 'Giới thiệu', link: '/introduce' },
-    { label: 'Trợ giúp', link: '/faq' },
-    { label: 'Sitemap', link: '/sitemap' },
+    { label: 'Giới thiệu', link: '/' },
+    { label: 'Trợ giúp', link: '/' },
+    { label: 'Sitemap', link: '/' },
   ];
   const drawerItems2 = [
     { label: 'Đăng ký', link: '/register' },
@@ -51,13 +51,13 @@ const Footer = () => {
           <h1 className='text-[#3d4d65] text-lg'>VỀ KIEMDIENHOMES</h1>
           <ul className='text-base text-[#54657e] mt-7'>
             <li className='hover:text-primary hover:font-medium cursor-pointer'>
-              <Link to='/introduce'>Giới thiệu</Link>
+              <Link to='/'>Giới thiệu</Link>
             </li>
             <li className='hover:text-primary hover:font-medium cursor-pointer'>
-              <Link to='/faq'>Trợ giúp</Link>
+              <Link to='/'>Trợ giúp</Link>
             </li>
             <li className='hover:text-primary hover:font-medium cursor-pointer'>
-              <Link to='/sitemap'>Sitemap</Link>
+              <Link to='/'>Sitemap</Link>
             </li>
           </ul>
         </div>
@@ -72,7 +72,7 @@ const Footer = () => {
               <Link to='/login'>Đăng nhập</Link>
             </li>
             <li className='hover:text-primary hover:font-medium cursor-pointer'>
-              <Link to='/post'>Đăng tin mới</Link>
+              <Link to='/add-post'>Đăng tin mới</Link>
             </li>
             <li className='hover:text-primary hover:font-medium cursor-pointer'>
               <Link to='/news'>Tin tức</Link>

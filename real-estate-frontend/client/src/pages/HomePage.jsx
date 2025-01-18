@@ -4,7 +4,6 @@ import { TimeSince } from '../utils/TimeSinceUtill';
 import Images from '../components/Images';
 import { ArrowRight, Clock } from '../components/Icons';
 import EstateCard from '../components/EstateCard';
-import ProjectCard from '../components/ProjectCard';
 import SliderComponent from '../components/slider/SliderComponent';
 import HomePageSearch from '../components/search/HomePageSearch';
 import apiRequest from '../services/apiRequest';
@@ -14,6 +13,7 @@ function HomePage() {
   const [latestNews, setLatestNews] = useState([]);
   const [latestPosts, setLatestPosts] = useState([]);
   const [topPosts, setTopPosts] = useState([]);
+  const [popularPosts, setPopularPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredNews, setHoveredNews] = useState(null);
 
@@ -29,6 +29,9 @@ function HomePage() {
       //Get top posts
       const topPostsResponse = await apiRequest('/posts/top-provinces');
       setTopPosts(topPostsResponse.data.topProvinces);
+      //Get popular posts
+      const popularPostsResponse = await apiRequest('/posts/popular');
+      setPopularPosts(popularPostsResponse.data);
       setIsLoading(false);
     }
     getData();
@@ -154,11 +157,9 @@ function HomePage() {
             Dự án bất động sản nổi bật
           </h1>
           <SliderComponent>
-            <ProjectCard />
-            <ProjectCard />
-            <ProjectCard />
-            <ProjectCard />
-            <ProjectCard />
+            {popularPosts.map((post) => (
+              <EstateCard key={post._id} data={post} />
+            ))}
           </SliderComponent>
         </div>
 

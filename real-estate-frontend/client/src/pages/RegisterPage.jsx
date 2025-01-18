@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import wallpaper from '../assets/city-wallpaper.jpg';
 import apiRequest from '../services/apiRequest';
+import { Eye, EyeOff } from '../components/Icons';
 
 function RegisterPage() {
   const [data, setData] = useState({
@@ -12,6 +13,7 @@ function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleOnChange = (element) => {
@@ -116,16 +118,23 @@ function RegisterPage() {
         <label htmlFor='password' className='text-sm font-light mb-2'>
           Mật khẩu <span className='text-red-600 font-medium'>*</span>
         </label>
-        <input
-          type='password'
-          id='password'
-          name='password'
-          value={data.password}
-          placeholder='Nhập mật khẩu'
-          className='bg-slate-100 text-sm font-light p-2 mb-2 focus:outline-none rounded'
-          onChange={handleOnChange}
-          required
-        />
+        <div className='relative'>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            id='password'
+            name='password'
+            placeholder='Nhập mật khẩu'
+            className='w-full bg-slate-100 text-sm font-light p-2 mb-2 focus:outline-none rounded'
+            required
+          />
+          <button
+            type='button'
+            className='text-gray-500 absolute right-2 top-2 '
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
 
         {error && (
           <span className='text-xs text-red-500 font-light'>{error}</span>

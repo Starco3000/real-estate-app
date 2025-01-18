@@ -9,7 +9,6 @@ import { showToast } from './Toast';
 import apiRequest from '../services/apiRequest';
 
 function PostCard({ data }) {
-  console.log('data:', data._id);
   const postDetailId = data.postDetailId;
   const agentInfo = data.userId;
   const navigate = useNavigate();

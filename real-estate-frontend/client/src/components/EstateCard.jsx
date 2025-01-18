@@ -13,7 +13,8 @@ function EstateCard({ data }) {
 
   useEffect(() => {
     const checkFavorite = async () => {
-      if (!data || !data._id) return;
+      const token = localStorage.getItem('token');
+      if (!token || !data || !data._id) return;
       try {
         const response = await apiRequest.get('/favorites');
         const favorites = response.data.favorites;

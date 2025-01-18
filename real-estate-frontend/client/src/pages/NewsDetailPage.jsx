@@ -383,7 +383,7 @@ function NewsDetailPage() {
                 <img
                   src={news.thumbnail || Images.wallpaper}
                   alt='thumbnail_news'
-                  className='w-full h-full rounded-lg'
+                  className='w-full min-w-[260px]  h-full rounded-lg'
                 />
               </div>
               <div className='flex flex-col justify-start items-start gap-2'>

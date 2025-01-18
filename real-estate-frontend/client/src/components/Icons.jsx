@@ -19,7 +19,7 @@ import {
 import { CiHeart, CiClock1, CiBitcoin } from 'react-icons/ci';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import { PiTag, PiTagFill } from 'react-icons/pi';
-import { IoCloudUploadOutline } from 'react-icons/io5';
+import { IoCloudUploadOutline, IoEye, IoEyeOff } from 'react-icons/io5';
 import { FiLogOut } from 'react-icons/fi';
 
 const ChevronLeft = FaChevronLeft;
@@ -48,6 +48,8 @@ const UploadCloud = IoCloudUploadOutline;
 const Bars = FaBars;
 const LogOut = FiLogOut;
 const Map = FaRegMap;
+const EyeOff = IoEyeOff;
+const Eye = IoEye;
 
 export {
   ChevronLeft,
@@ -75,5 +77,7 @@ export {
   UploadCloud,
   Bars,
   LogOut,
-  Map
+  Map,
+  EyeOff,
+  Eye,
 };

@@ -5,11 +5,13 @@ import apiRequest from '../services/apiRequest';
 import noavatar from '../assets/noavatar.jpg';
 import { uploadFile } from '../helpers/uploadFile';
 import { showToast } from '../components/Toast';
+import { Eye, EyeOff } from '../components/Icons';
 
 function ProfilePage() {
   const [error, setError] = useState('');
   const { updateUser, currentUser } = useContext(AuthContext);
   const [isAvatar, setIsAvatar] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   const uploadPhotoRef = useRef();
 
@@ -78,7 +80,7 @@ function ProfilePage() {
               className='w-20 h-10 bg-primary text-white text-sm rounded-md'
               onClick={handleOpenUploadPhoto}
             >
-              Change Photo
+              Đổi ảnh
             </button>
             <input
               type='file'
@@ -94,7 +96,7 @@ function ProfilePage() {
           {/* Infomation */}
           <div>
             <div className='mt-5 '>
-              <label className='font-medium text-sm'>Username</label>
+              <label className='font-medium text-sm'>Tên người dùng</label>
               <input
                 id='username'
                 name='username'
@@ -135,12 +137,22 @@ function ProfilePage() {
             </div>
             <div className='mt-5 '>
               <label className='font-medium text-sm'>Mật khẩu</label>
-              <input
-                id='password'
-                name='password'
-                type='password'
-                className='w-full h-10 border-[1px] border-gray-300 rounded-md px-3 mt-1'
-              />
+              <div className='relative'>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id='password'
+                  name='password'
+                  placeholder='Nhập mật khẩu'
+                  className='w-full bg-slate-100 text-sm font-light p-2 mb-2 focus:outline-none rounded'
+                />
+                <button
+                  type='button'
+                  className='text-gray-500 absolute right-2 top-2 '
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
           </div>
           {/* Error */}

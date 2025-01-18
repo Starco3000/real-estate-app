@@ -1,21 +1,14 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import apiRequest from '../services/apiRequest.js';
 import Images from './Images.jsx';
-import {
-  AddPost,
-  ChevronLeft,
-  Logout,
-  News,
-  RealEstate,
-  Setting,
-  User,
-} from './Icons.jsx';
+import { AddPost, ChevronLeft, Logout, RealEstate, Setting } from './Icons.jsx';
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const { updateUser } = useContext(AuthContext);
+  const [selected, setSelected] = useState('/add-post');
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -76,7 +69,11 @@ function Sidebar({ isOpen, toggleSidebar }) {
         {/* Sidebar Menu */}
         <div className='w-full px-4 flex flex-col gap-y-4'>
           <Link to='/add-post' data-tooltip-id='add-post'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/add-post' ? 'bg-secondary text-white' : ''
+              }`}
+            >
               <div className='w-8 ml-[14px]'>
                 <AddPost className='w-6 h-6' />
               </div>
@@ -91,7 +88,11 @@ function Sidebar({ isOpen, toggleSidebar }) {
           </Link>
 
           <Link to='/user-posts' data-tooltip-id='posts'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/user-posts' ? 'bg-secondary text-white' : ''
+              }`}
+            >
               <div className='w-8 ml-[14px]'>
                 <RealEstate className='w-6 h-6' />
               </div>
@@ -104,55 +105,25 @@ function Sidebar({ isOpen, toggleSidebar }) {
               </span>
             </div>
           </Link>
-          {/* <Link to='/admin/users' data-tooltip-id='users'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
-              <div className='w-8 ml-[14px]'>
-                <User className='w-6 h-6' />
-              </div>
-              <span
-                className={`w-full overflow-hidden ${
-                  !isOpen && 'hidden overflow-hidden'
-                } whitespace-nowrap`}
-              >
-                User Accounts
-              </span>
-            </div>
-          </Link> */}
-          {/* <Link to='/admin/news' data-tooltip-id='news'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
-              <div className='w-8 ml-[14px]'>
-                <News className='w-6 h-6' />
-              </div>
-              <span
-                className={`w-full overflow-hidden ${
-                  !isOpen && 'hidden overflow-hidden'
-                }`}
-              >
-                News
-              </span>
-            </div>
-          </Link> */}
-          {/* <Link to='/admin/reports'>
-            <div className='flex items-center gap-4 p-2 pl-8 hover:bg-[#1A202C]'>
-              <img src={Images.reports} alt='Reports' className='w-6 h-6' />
-              <span className='text-white'>Reports</span>
-            </div>
-          </Link> */}
         </div>
         {/* setting */}
         <div className='w-full px-4 mb-6'>
           <div className='w-full h-[1px] px-4 mb-2 bg-gray-400' />
           <Link to='/profile' data-tooltip-id='setting'>
-            <div className='px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out'>
+            <div
+              className={`px-2 py-4 flex justify-start items-center gap-x-5 rounded-lg text-gray-300 hover:bg-secondary hover:text-white transition-all duration-500 ease-in-out ${
+                selected === '/profile' ? 'bg-secondary text-white' : ''
+              }`}
+            >
               <div className='w-8 ml-[14px]'>
                 <Setting className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 }`}
               >
-                Setting
+                Cài đặt tài khoản
               </span>
             </div>
           </Link>
@@ -166,11 +137,11 @@ function Sidebar({ isOpen, toggleSidebar }) {
                 <Logout className='w-6 h-6' />
               </div>
               <span
-                className={`w-full overflow-hidden ${
+                className={`w-full text-nowrap overflow-hidden ${
                   !isOpen && 'hidden overflow-hidden'
                 }`}
               >
-                Logout
+                Đăng xuất
               </span>
             </div>
           </div>
@@ -182,14 +153,10 @@ function Sidebar({ isOpen, toggleSidebar }) {
         {!isOpen && (
           <ReactTooltip id='posts' place='right' content='Quản lý bài tin' />
         )}
-        {/* {!isOpen && (
-          <ReactTooltip id='users' place='right' content='User Accounts' />
-        )} */}
-        {/* {!isOpen && <ReactTooltip id='news' place='right' content='News' />} */}
         {!isOpen && (
-          <ReactTooltip id='setting' place='right' content='Cài đặtđặt' />
+          <ReactTooltip id='setting' place='right' content='Cài đặt tài khoản' />
         )}
-        {!isOpen && <ReactTooltip id='logout' place='right' content='Logout' />}
+        {!isOpen && <ReactTooltip id='logout' place='right' content='Đăng xuất' />}
       </div>
     </div>
   );
