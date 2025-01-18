@@ -5,7 +5,7 @@ import logo1 from '../assets/logo-navbar-yellow.png';
 import logo2 from '../assets/logo-navbar-gray.png';
 import noavatar from '../assets/noavatar.jpg';
 import banner from '../assets/banner-HCM-city.jpg';
-import onlyLogo from '../assets/logo.png';
+import onlyLogo from '../assets/Logo.png';
 
 
 const Images = {
